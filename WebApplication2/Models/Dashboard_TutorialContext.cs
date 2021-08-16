@@ -22,9 +22,7 @@ namespace Dynamic_User_Defined_Dashboards.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                //optionsBuilder.UseSqlServer("server=localhost;port=3306;user=root;password=12345;database=Dashboard_Tutorial");
-                optionsBuilder.UseSqlServer("Server=(localdb)\\.;Integrated Security=true;database=Dashboard_Tutorial");
+                optionsBuilder.UseSqlServer("Server=tcp:otisbiwebapp.database.windows.net,1433;Initial Catalog=WebAppDB_Dev;Persist Security Info=False;User ID=OtisBI_App;Password=Otisglobal@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }
 
