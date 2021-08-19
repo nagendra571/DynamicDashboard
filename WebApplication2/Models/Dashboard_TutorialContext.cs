@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using WebApplication2.Models;
 
 namespace Dynamic_User_Defined_Dashboards.Models
 {
@@ -17,6 +19,8 @@ namespace Dynamic_User_Defined_Dashboards.Models
         public virtual DbSet<DashboardsInfo> DashboardsInfo { get; set; }
         public virtual DbSet<Elements> Elements { get; set; }
         public virtual DbSet<Templates> Templates { get; set; }
+        public virtual DbSet<WidgetStructure> WidgetStructure { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -24,7 +28,7 @@ namespace Dynamic_User_Defined_Dashboards.Models
             {
                 optionsBuilder.UseSqlServer("Server=tcp:otisbiwebapp.database.windows.net,1433;Initial Catalog=WebAppDB_Dev;Persist Security Info=False;User ID=OtisBI_App;Password=Otisglobal@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
-        }
+        }        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -83,6 +87,11 @@ namespace Dynamic_User_Defined_Dashboards.Models
                     .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<WidgetStructure>(entity =>
+            {
+                entity.ToTable("WidgetStructure", "dbo");
             });
         }
     }

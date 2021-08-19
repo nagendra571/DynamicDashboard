@@ -1,19 +1,57 @@
 
-<div class="col-md">
-    <div class="persona-card persona-card-small yellow-card dark-mode">
-        <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">Lighthouse</div>
-        <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">Weekly Callback</h3>
-        <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
-            <a target="_blank" href="#" class="blackwhitetext">
-               5000
-            </a>
-        </span>
-        <span style="font-size:18px;color: #D12729;opacity: .79; padding-top: 35px; margin-right: 27px; float: right;">
-            <img src="~/images/red arrow down.png" />
-            7
-        </span>
+@model Widget
+
+@{
+    TileCard1 obj = (TileCard1)Model;
+}
+
+@if (!obj.IsRealValues)
+{
+    <div class="col-md">
+        <div class="persona-card persona-card-small yellow-card dark-mode">
+            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">Heading</div>
+            <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">Sub-Heading</h3>
+            <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
+                <a target="_blank" href="#" class="blackwhitetext">
+                    Value
+                </a>
+            </span>
+            <span style="font-size:18px;color: #D12729;opacity: .79; padding-top: 35px; margin-right: 27px; float: right;">
+                <img src="~/images/red arrow down.png" />&nbsp;
+                <img src="~/images/green arrow up.png" />
+                PerfomanceValue
+            </span>
+        </div>
     </div>
-</div>
+
+
+}
+else
+{
+
+    <div class="col-md">
+        <div class="persona-card persona-card-small @(obj.PerformanceValue <= 0 ? "red-card" : "green-card") dark-mode">
+            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">@obj.Heading</div>
+            <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">@obj.SubHeading</h3>
+            <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
+                <a target="_blank" href='@(string.IsNullOrEmpty(obj.Link) ? "#" : obj.Link)' class="blackwhitetext">
+                    @String.Format("{0:"+obj.Format+"}", obj.Value)
+                </a>
+            </span>
+            <span style="font-size:18px;color: @(obj.PerformanceValue <= 0 ? "#E62727" : "#4caf50");opacity: .79; padding-top: 35px; margin-right: 27px; float: right;">
+                @if (obj.PerformanceValue <= 0)
+                {
+                    <img src="~/images/red arrow down.png" />
+                }
+                else
+                {
+                    <img src="~/images/green arrow up.png" />
+                }
+                @obj.PerformanceValue
+            </span>
+        </div>
+    </div>
+}
 
 
 <style type="text/css">

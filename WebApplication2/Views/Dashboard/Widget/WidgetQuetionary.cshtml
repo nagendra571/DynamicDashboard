@@ -1,0 +1,32 @@
+﻿
+@model Widget
+
+@{
+    var list = new SelectList(Model.TableAndColumns.Keys);
+}
+
+<form>
+    <div class="form-group">
+        <label for="Heading">Heading</label>
+        @Html.TextBoxFor(m => m.Heading, new { @class = "form-control" })
+        @Html.HiddenFor(m=> m.ElementTemplateID)
+    </div>
+    <div class="form-group">
+        <label for="Heading">Sub Heading</label>
+        @Html.TextBoxFor(m => m.SubHeading, new { @class = "form-control" })
+
+    </div>
+    <div class="form-group">
+        <label for="SourceName">Source</label>
+        @Html.DropDownListFor(m => m.SourceName, list, "Select Source", new { @class = "form-control" })
+    </div>
+</form>
+
+@*<div class="form-group">
+    <label for="exampleFormControlSelect2">Value Column</label>
+    @Html.DropDownListFor(m => m.SourceName, list, "Select Source", new { @class = "form-control" })
+</div>
+<div class="form-group">
+    <label for="exampleFormControlTextarea1">Example textarea</label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+</div>*@

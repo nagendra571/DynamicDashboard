@@ -1,0 +1,167 @@
+@model Widget
+
+@{
+    ViewBag.Title = "Widget";
+
+    var ColumnsList = new SelectList(Model.TableAndColumns.Values.FirstOrDefault());
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Please provide the property values
+    </h1>
+</section>
+
+@using (Html.BeginForm((Model.ElementTemplateID == 7? "SaveTileCard1" : "SaveTileCard2"), "Dashboard", FormMethod.Post))
+{
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="row">
+                    <!-- Element1 -->
+                    @if (Model.ElementTemplateID >= 1)
+                    {
+                        <div class="col-md-6 col-lg-6 col-xs-12">
+                            <div class="white-box" style="width: 400px; height: 300px">
+                                <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
+                                    @{ Html.RenderPartial("~/Views/Dashboard/Elements/Element" + (Model.ElementTemplateID) + ".cshtml", Model); }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <br>
+                    <div class="col-md-6 col-lg-6 col-xs-12">
+                        @{ Html.RenderPartial("~/Views/Dashboard/Widget/WidgetQuetionary.cshtml", Model); }
+                    </div>
+
+                    @if (Model.RequiredCaptureValues && Model.ElementTemplateID == 7)
+                    {
+                        <div class="col-md-6 col-lg-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="ValueColumnName">Value</label>
+                                @Html.DropDownListFor(m => ((TileCard1)m).ValueColumnName, ColumnsList, "Select Value Column", new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                <label for="PerformanceValueColumnName">Performance Value</label>
+                                @Html.DropDownListFor(m => ((TileCard1)m).PerformanceValueColumnName, ColumnsList, "Select Performance Value Column", new { @class = "form-control" })
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Format">Value Format</label>
+                                @Html.TextBoxFor(m => ((TileCard1)m).Format, new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                <label for="Link">Value Link</label>
+                                @Html.TextBoxFor(m => ((TileCard1)m).Link, new { @class = "form-control" })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="FilterColumnName">Category Column</label>
+                                @Html.DropDownListFor(m => ((TileCard1)m).FilterColumnName, ColumnsList, "Select Category Column", new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                <label for="Filter">Enter Category Value</label>
+                                @Html.TextBoxFor(m => ((TileCard1)m).Filter, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    }
+                    else if (Model.RequiredCaptureValues && Model.ElementTemplateID == 6)
+                    {
+                        <div class="col-md-6 col-lg-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="CountColumnName">Count Column name</label>
+                                @Html.DropDownListFor(m => ((TileCard2)m).CountColumnName, ColumnsList, "Select Value Column", new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                <label for="AmountColumnName">Amount Value Column</label>
+                                @Html.DropDownListFor(m => ((TileCard2)m).AmountColumnName, ColumnsList, "Select Performance Value Column", new { @class = "form-control" })
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Format">Amount Value Format</label>
+                                @Html.TextBoxFor(m => ((TileCard2)m).Format, new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                <label for="Link">Count Value Link</label>
+                                @Html.TextBoxFor(m => ((TileCard2)m).Link, new { @class = "form-control" })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="FilterColumnName">Category Column(If any)</label>
+                                @Html.DropDownListFor(m => ((TileCard2)m).FilterColumnName, ColumnsList, "Select Category Column", new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                <label for="Filter">Enter Category Value(If any)</label>
+                                @Html.TextBoxFor(m => ((TileCard2)m).Filter, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    }
+                    <div class="col-md-6 col-lg-6 col-xs-12">
+                        <div class="form-group">
+                            <button type="submit">Submit Form</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+}
+
+<script>
+
+    $(function() {
+
+        $('button.btn').on('click', function(e){
+
+            var dashboardId = '@ViewData["dashboardId"]';
+            $.ajax(
+            {
+            type: "POST",
+                url: '@Url.Action("AddElement", "Dashboard")',
+                data: {
+                DashboardId: dashboardId,
+                    ElementId: this.id,
+                    Placement: localStorage.getItem("placement")
+                },
+                error: function (result) {
+                    alert(result);
+                },
+                success: function (result) {
+
+                    if (result == "True") {
+                        window.location = "/Dashboard/Dashboard/"+dashboardId;
+                    }
+                    else {
+                        alert("There is a Problem!");
+                    }
+                }
+            });
+        });
+
+        $('#SourceName').change(function () {
+            var url = '@Url.Content("~/")' + "Dashboard/GetColumns";
+            var ddlSource = $('#SourceName').val();
+
+            $.getJSON(url, { TableName: ddlSource }, function (data) {
+                var items = '';
+                $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName').empty();
+
+                items += "<option value=''>"+" "+"</option>";
+                $.each(data, function (i, columnName) {
+                    items += "<option value='" + columnName.text + "'>" + columnName.text+"</option>";
+                });
+                $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName').html(items);
+
+            });
+
+        });
+
+    });
+</script>
+

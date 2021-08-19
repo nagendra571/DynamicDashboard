@@ -1,0 +1,49 @@
+
+@model IEnumerable<Widget>
+
+@{
+    ViewBag.Title = "Dashboard Elements";
+
+    var list = Model;
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Elements List
+    </h1>
+</section>
+
+<!-- Main content -->
+<form>
+    <section class="content container-fluid">
+        <div class="row match-to-row">
+            @for (int i = 1; i <= 3; i++)
+            {
+                @foreach (var widg in Model)
+                {
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="thumbnail">
+                            @{ Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg); }
+                        </div>
+                    </div>
+
+
+
+
+                    <!--<div class="row">-->
+                    <!-- Element8 -->
+                    <!--<div class="col-md-12 col-lg-12 col-xs-12">
+                            <div class="white-box">
+                                <div class="white-box" style="width:30%; padding-left:10px; padding-right:10px; padding-bottom:10px;">
+                                    <br>@{ Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg); }
+                                </div>
+                            </div>
+                        </div>
+                    </div>-->
+                }
+            }
+        </div>
+    </section>
+</form>
+

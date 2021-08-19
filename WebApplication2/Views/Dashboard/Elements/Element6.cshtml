@@ -1,19 +1,44 @@
-<div class="col-md">
+@{
+    TileCard2 obj = (TileCard2)Model;
+}
 
-    <div class="persona-card persona-card-small green-card dark-mode">
-        <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">Greater than 90 days</div>
-        <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">Open AR</h3>
-        <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
-            <a target="_blank" href="#" class="blackwhitetext">
-                45
-            </a>
-        </span>
-        <span style="font-size:46px;color: #586672;opacity: .7; padding-top: 8px; margin-right: 27px; float: right;">
-            $1,150M
-        </span>
 
+@if (!obj.IsRealValues)
+{
+    <div class="col-md">
+        <div class="persona-card persona-card-small green-card dark-mode">
+            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">Heading (Ex: Greater than 90 days)</div>
+            <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">Sub Heading (Ex: Open AR)</h3>
+            <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
+                <a target="_blank" href="#" class="blackwhitetext">
+                    Count
+                </a>
+            </span>
+            <span style="font-size:46px;color: #586672;opacity: .7; padding-top: 8px; margin-right: 27px; float: right;">
+                Amount
+            </span>
+
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="col-md">
+        <div class="persona-card persona-card-small @(obj.Count <= 0 ? "red-card" : "green-card") dark-mode">
+            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">@obj.Heading</div>
+            <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">@obj.SubHeading</h3>
+            <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
+                <a target="_blank" href='@(string.IsNullOrEmpty(obj.Link) ? "#" : obj.Link)' class="blackwhitetext">
+                    @obj.Count
+                </a>
+            </span>
+            <span style="font-size:46px;color: #586672;opacity: .7; padding-top: 8px; margin-right: 27px; float: right;">
+                @String.Format("{0:" + obj.Format + "}", obj.Amount)
+            </span>
+
+        </div>
+    </div>
+}
 
 
 <style type="text/css">
