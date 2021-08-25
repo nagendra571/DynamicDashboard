@@ -20,6 +20,8 @@ namespace Dynamic_User_Defined_Dashboards.Models
         public virtual DbSet<Elements> Elements { get; set; }
         public virtual DbSet<Templates> Templates { get; set; }
         public virtual DbSet<WidgetStructure> WidgetStructure { get; set; }
+        public virtual DbSet<BusinessRole> BusinessRole { get; set; }
+        public virtual DbSet<BusinessRoleDashboardMapping> BusinessRoleDashboardMapping { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -43,10 +45,10 @@ namespace Dynamic_User_Defined_Dashboards.Models
 
                 entity.Property(e => e.ElementId).HasColumnType("int");
 
-                entity.Property(e => e.Placement)
-                    .IsRequired()
-                    .HasMaxLength(55)
-                    .IsUnicode(false);
+                entity.Property(e => e.IsDefaultElement).HasColumnType("bool");                
+
+                entity.Property(e => e.Placement).HasColumnType("string"); 
+
             });
 
             modelBuilder.Entity<DashboardsInfo>(entity =>
@@ -60,7 +62,7 @@ namespace Dynamic_User_Defined_Dashboards.Models
                     .HasMaxLength(255)
                     .IsUnicode(false);
 
-                entity.Property(e => e.TemplateId).HasColumnType("int");
+                entity.Property(e => e.ElementsCount).HasColumnType("int");
             });
 
             modelBuilder.Entity<Elements>(entity =>
@@ -92,6 +94,16 @@ namespace Dynamic_User_Defined_Dashboards.Models
             modelBuilder.Entity<WidgetStructure>(entity =>
             {
                 entity.ToTable("WidgetStructure", "dbo");
+            });
+
+            modelBuilder.Entity<BusinessRole>(entity =>
+            {
+                entity.ToTable("BusinessRole", "dbo");
+            });
+
+            modelBuilder.Entity<BusinessRoleDashboardMapping>(entity =>
+            {
+                entity.ToTable("BusinessRoleDashboardMapping", "dbo");
             });
         }
     }

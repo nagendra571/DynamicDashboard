@@ -30,72 +30,153 @@ namespace EnergyAxis.Controllers
             return View("Templates/TemplateList");
         }
 
+        public IActionResult WidgetsSelection(string DashboardName)
+        {
+            var widgets = getWidgetList();
+
+            widgets.ForEach(m => m.WidgetSelection = true);
+            widgets.ForEach(m => m.IsDragDropEnabled = true);
+
+            ViewBag.Dashboardname = DashboardName;
+
+            return View("Elements/EditDashboard", widgets);
+        }
+
         public IActionResult Dashboard(int id)
         {
-            DashboardsInfo dashboard = db.DashboardsInfo.Where(s => s.Id == id).FirstOrDefault();
-            int elementsCount = (int)db.Templates.Where(s => s.Id == dashboard.TemplateId).Select(s => s.ElementsCount).FirstOrDefault();
+            DashboardsInfo board = db.DashboardsInfo.Where(m => m.Id == id).FirstOrDefault();
+            List<DashboardLinkedElements> widgetListByDashboard = db.DashboardLinkedElements.Where(m => m.DashboardId == id).ToList();
 
-            var linked_elements = db.DashboardLinkedElements.Where(s => s.DashboardId == id).ToList();
-            for (int i = 1; i <= elementsCount; i++)
+            List<Widget> widgets = new List<Widget>();
+
+            foreach (var widg in widgetListByDashboard)
             {
-                var element = linked_elements.Where(s => s.Placement == i.ToString());
-                if (element.Any())
-                {
-                    ViewData["Element" + i] = "../Elements/Element" + element.First().ElementId + ".cshtml";
-                }
-                else
-                {
-                    ViewData["Element" + i] = "../Elements/Default.cshtml";
-                }
+                widgets.AddRange(getWidgetListByID(widg.ElementId));
             }
+            widgets.ForEach(m => m.DashboardID = id);
 
-            ViewData["dashboardId"] = id;
-            return View("Templates/Template" + dashboard.TemplateId);
+
+            ViewBag.Dashboardname = board.Name;
+
+            return View("Elements/WidgetsList", widgets);
         }
 
         public IActionResult WidgetsList()
         {
-            var Widgets = db.WidgetStructure.ToList();
-
-            List<Widget> widgetsInfo = new List<Widget>();
-
-            foreach (var widg in Widgets)
-            {
-                if (widg.ClassType == typeof(TileCard1).ToString())
-                {
-                    TileCard1 w = (TileCard1)WidgetsDataManager.PrepareData(widg);
-                    w.IsRealValues = true;
-                    w.RequiredCaptureValues = false;
-
-                    var result = db.RawSqlQuery(
-                        ((TileCard1)w).Query,
-                        x => new TileCard1() { Value = Convert.ToDecimal(x[0]), PerformanceValue = Convert.ToDecimal(x[1]) }
-                        );
-                    w.Value = result.FirstOrDefault().Value;
-                    w.PerformanceValue = result.FirstOrDefault().PerformanceValue;
-
-                    widgetsInfo.Add(w);
-                }
-                else if (widg.ClassType == typeof(TileCard2).ToString())
-                {
-                    TileCard2 w = (TileCard2)WidgetsDataManager.PrepareData(widg);
-                    w.IsRealValues = true;
-                    w.RequiredCaptureValues = false;
-
-                    var result = db.RawSqlQuery(
-                        ((TileCard2)w).Query,
-                        x => new TileCard2() { Count = Convert.ToDecimal(x[0]), Amount = Convert.ToDecimal(x[1]) }
-                        );
-                    w.Count = result.FirstOrDefault().Count;
-                    w.Amount = result.FirstOrDefault().Amount;
-
-                    widgetsInfo.Add(w);
-                }
-            }
-            return View("Elements/WidgetsList", widgetsInfo);
+            return View("Elements/WidgetsList", getWidgetList());
         }
 
-        public string Createdashboard(DashboardsInfo dashboard)
+        public string Createdashboard(DashboardViewModel dashboard)
+        {
+            try
+            {
+                int BoardID = CreateDashboard(dashboard);
+                CreateDashboardElements(dashboard, BoardID);
+
+                return BoardID.ToString();
+            }
+            catch (System.Exception e)
+            {
+                return "False";
+            }
+        }
+
+        public IActionResult EditDashboard(int id)
+        {
+            List<DashboardLinkedElements> widgetListByDashboard = null;
+            if (id > 0)
+            {
+                DashboardsInfo board = db.DashboardsInfo.Where(m => m.Id == id).FirstOrDefault();
+                widgetListByDashboard = db.DashboardLinkedElements.Where(m => m.DashboardId == id).ToList();
+                ViewBag.Dashboardname = board.Name;
+            }
+
+            List<Widget> widgets = getWidgetList();
+            if (id > 0)
+            {
+                foreach (var widg in widgetListByDashboard)
+                {
+                    widgets.Where(m => m.WidgetID == widg.ElementId).FirstOrDefault().IsAccessble = true;
+                    widgets.Where(m => m.WidgetID == widg.ElementId).FirstOrDefault().DashboardID = id;
+                    widgets.Where(m => m.WidgetID == widg.ElementId).FirstOrDefault().IsDefaulted = widg.IsDefaultElement;
+                }
+            }
+
+            widgets.ForEach(m => m.IsDragDropEnabled = true);
+
+            return View("Elements/EditDashboard", widgets);
+        }
+
+
+        [HttpGet]
+        public IActionResult MapDashboards()
+        {
+            List<DashboardsInfo> AllDashboards = db.DashboardsInfo.ToList();
+
+            var roles = db.BusinessRole.ToList();
+            roles.Add(new BusinessRole() { ID = 0, BusinessRoleName = "" });
+            roles = roles.OrderBy(m => m.ID).ToList();
+
+            ViewBag.Roles = roles;
+            return View("Elements/MapDashboards", AllDashboards);
+        }
+
+        [HttpPost]
+        public string MapDashboards(BusinessRoleDashboardMapping mapping)
+        {
+            var SelectedDashboards = mapping.SelectedDashboardIds.Split(',').Select(Int32.Parse).ToList<int>();
+
+            try
+            {
+                if (SelectedDashboards != null && SelectedDashboards.Count() > 0)
+                {
+                    foreach (var board in SelectedDashboards)
+                    {
+                        db.BusinessRoleDashboardMapping.Add(new BusinessRoleDashboardMapping()
+                        {
+                            RoleId = mapping.RoleId,
+                            DashboardId = board
+                        });
+                        db.SaveChanges();
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                return "False";
+            }
+
+            return mapping.RoleId.ToString();
+        }
+
+        public string UpdateDashboard(DashboardViewModel dashboard)
+        {
+            try
+            {
+                int BoardID = dashboard.Id;
+
+                if (BoardID > 0)
+                {
+                    UpdateDashboardName(dashboard);
+
+                    DeleteDashboardElements(BoardID);
+                }
+                else
+                {
+                    BoardID = CreateDashboard(dashboard);
+                }
+
+                CreateDashboardElements(dashboard, BoardID);
+
+                return BoardID.ToString();
+            }
+            catch (System.Exception e)
+            {
+                return "False";
+            }
+        }
+
+        public string CreatedashboardWithTemplate(DashboardsInfo dashboard)
         {
             try
             {
@@ -110,14 +191,12 @@ namespace EnergyAxis.Controllers
             }
         }
 
-
         public IActionResult ElementList(int id)
         {
 
             ViewData["dashboardId"] = id;
             return View("Elements/ElementList");
         }
-
 
         public IActionResult CreateWidget(int TemplatedID)
         {
@@ -147,6 +226,19 @@ namespace EnergyAxis.Controllers
                 };
             }
             return View("Widget/Index", tileCard);
+        }
+
+        public IActionResult SelectDashboard()
+        {
+            Dictionary<int, string> Dashboards = new Dictionary<int, string>();
+
+            var boards = db.DashboardsInfo.ToList();
+            foreach (var board in boards)
+            {
+                Dashboards.Add(board.Id, board.Name);
+            }
+
+            return View("Elements/SelectDashboard", Dashboards);
         }
 
         [HttpPost]
@@ -240,6 +332,216 @@ namespace EnergyAxis.Controllers
         public ActionResult GetDashboardsList()
         {
             return Ok(db.DashboardsInfo.ToList());
+        }
+
+        public ActionResult GetBusinessRolesList()
+        {
+            return Ok(db.BusinessRole.ToList());
+        }
+
+        public ActionResult GetDashboardsByRole(int RoleId)
+        {
+            var boards = from map in db.BusinessRoleDashboardMapping
+                         join role in db.BusinessRole on map.RoleId equals role.ID
+                         join board in db.DashboardsInfo on map.DashboardId equals board.Id
+                         where map.RoleId == RoleId
+                         select board;
+
+            return Ok(boards.ToList());
+        }
+
+        private List<Widget> getWidgetList()
+        {
+            var Widgets = db.WidgetStructure.ToList();
+
+            List<Widget> widgetsInfo = new List<Widget>();
+
+            foreach (var widg in Widgets)
+            {
+                if (widg.ClassType == typeof(TileCard1).ToString())
+                {
+                    TileCard1 w = (TileCard1)WidgetsDataManager.PrepareData(widg);
+                    w.IsRealValues = true;
+                    w.RequiredCaptureValues = false;
+
+                    var result = db.RawSqlQuery(
+                        ((TileCard1)w).Query,
+                        x => new TileCard1() { Value = Convert.ToDecimal(x[0]), PerformanceValue = Convert.ToDecimal(x[1]) }
+                        );
+                    w.Value = result.FirstOrDefault().Value;
+                    w.PerformanceValue = result.FirstOrDefault().PerformanceValue;
+                    w.WidgetID = widg.ID;
+
+
+                    widgetsInfo.Add(w);
+                }
+                else if (widg.ClassType == typeof(TileCard2).ToString())
+                {
+                    TileCard2 w = (TileCard2)WidgetsDataManager.PrepareData(widg);
+                    w.IsRealValues = true;
+                    w.RequiredCaptureValues = false;
+
+                    var result = db.RawSqlQuery(
+                        ((TileCard2)w).Query,
+                        x => new TileCard2() { Count = Convert.ToDecimal(x[0]), Amount = Convert.ToDecimal(x[1]) }
+                        );
+                    w.Count = result.FirstOrDefault().Count;
+                    w.Amount = result.FirstOrDefault().Amount;
+                    w.WidgetID = widg.ID;
+
+                    widgetsInfo.Add(w);
+                }
+            }
+            return widgetsInfo;
+        }
+
+        private List<Widget> getWidgetListByID(int WidgetID)
+        {
+            var Widgets = db.WidgetStructure.Where(M => M.ID == WidgetID).ToList();
+
+            List<Widget> widgetsInfo = new List<Widget>();
+
+            foreach (var widg in Widgets)
+            {
+                if (widg.ClassType == typeof(TileCard1).ToString())
+                {
+                    TileCard1 w = (TileCard1)WidgetsDataManager.PrepareData(widg);
+                    w.IsRealValues = true;
+                    w.RequiredCaptureValues = false;
+
+                    var result = db.RawSqlQuery(
+                        ((TileCard1)w).Query,
+                        x => new TileCard1() { Value = Convert.ToDecimal(x[0]), PerformanceValue = Convert.ToDecimal(x[1]) }
+                        );
+                    w.Value = result.FirstOrDefault().Value;
+                    w.PerformanceValue = result.FirstOrDefault().PerformanceValue;
+                    w.WidgetID = widg.ID;
+
+                    widgetsInfo.Add(w);
+                }
+                else if (widg.ClassType == typeof(TileCard2).ToString())
+                {
+                    TileCard2 w = (TileCard2)WidgetsDataManager.PrepareData(widg);
+                    w.IsRealValues = true;
+                    w.RequiredCaptureValues = false;
+
+                    var result = db.RawSqlQuery(
+                        ((TileCard2)w).Query,
+                        x => new TileCard2() { Count = Convert.ToDecimal(x[0]), Amount = Convert.ToDecimal(x[1]) }
+                        );
+                    w.Count = result.FirstOrDefault().Count;
+                    w.Amount = result.FirstOrDefault().Amount;
+                    w.WidgetID = widg.ID;
+
+                    widgetsInfo.Add(w);
+                }
+            }
+            return widgetsInfo;
+        }
+
+        private int CreateDashboard(DashboardViewModel dashboard)
+        {
+            try
+            {
+                var Board = new DashboardsInfo()
+                {
+                    Name = dashboard.Name,
+                    ElementsCount = dashboard.SelectedElements.Split(',').Length
+                };
+                db.DashboardsInfo.Add(Board);
+                db.SaveChanges();
+
+                return Board.Id;
+            }
+            catch (System.Exception e)
+            {
+                return 0;
+            }
+        }
+
+        private string UpdateDashboardName(DashboardViewModel dashboard)
+        {
+            try
+            {
+                var board = db.DashboardsInfo.Where(m => m.Id == dashboard.Id).FirstOrDefault();
+
+                if (board != null && board.Name != dashboard.Name)
+                {
+                    db.Attach<DashboardsInfo>(board);
+
+                    board.Name = dashboard.Name;
+                    db.Entry(board).Property(p => p.Name).IsModified = true;
+                    board.Name = dashboard.Name;
+
+                    db.SaveChanges();
+                }
+
+                return "True";
+            }
+            catch (System.Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        private string CreateDashboardElements(DashboardViewModel dashboard, int DashboardID)
+        {
+            var SelectedElements = dashboard.SelectedElements.Split(',').Select(Int32.Parse).ToList<int>();
+            var DefaultedGadgets = dashboard.DefaultedElements.Split(',').Select(Int32.Parse).ToList<int>();
+            try
+            {
+                if (SelectedElements != null && SelectedElements.Count() > 0)
+                {
+                    foreach (var item in SelectedElements)
+                    {
+                        db.DashboardLinkedElements.Add(new DashboardLinkedElements()
+                        {
+                            DashboardId = DashboardID,
+                            ElementId = item,
+                            IsDefaultElement = false
+                        });
+                        db.SaveChanges();
+                    }
+                }
+                if (DefaultedGadgets != null && DefaultedGadgets.Count() > 0)
+                {
+                    foreach (var item in DefaultedGadgets)
+                    {
+                        db.DashboardLinkedElements.Add(new DashboardLinkedElements()
+                        {
+                            DashboardId = DashboardID,
+                            ElementId = item,
+                            IsDefaultElement = true
+                        });
+                        db.SaveChanges();
+                    }
+                }
+                return "True";
+            }
+            catch (System.Exception e)
+            {
+                return e.Message;
+            }
+
+        }
+
+        private string DeleteDashboardElements(int DashboardID)
+        {
+            try
+            {
+                var DashboardLinkedElements = db.DashboardLinkedElements.Where(m => m.DashboardId == DashboardID).ToList();
+
+                foreach (var Element in DashboardLinkedElements)
+                {
+                    db.DashboardLinkedElements.Remove(Element);
+                    db.SaveChanges();
+                }
+                return "True";
+            }
+            catch (System.Exception e)
+            {
+                return e.Message;
+            }
         }
     }
 }

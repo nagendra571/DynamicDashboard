@@ -11,10 +11,9 @@ namespace WebApplication2.Models
         {
             Type ObjInstance = GetType(obj.ClassType);
 
-            var WidgetObject = JsonSerializer.Deserialize(obj.Formation, ObjInstance);
+            var WidgetObject = JsonSerializer.Deserialize(obj.Formation, ObjInstance);            
 
             return WidgetObject;
-
         }
 
         private static object GetInstance(string strFullyQualifiedName)

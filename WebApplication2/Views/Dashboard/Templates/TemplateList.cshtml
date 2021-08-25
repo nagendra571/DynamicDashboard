@@ -120,7 +120,7 @@
         $.ajax(
         {
             type: "POST",
-            url: '@Url.Action("Createdashboard", "Dashboard")',
+            url: '@Url.Action("CreatedashboardWithTemplate", "Dashboard")',
             data: {
                 Name: localStorage.getItem("dashboard_name"),
                 TemplateId: $('input[type=radio][name=template]:checked').attr('id')

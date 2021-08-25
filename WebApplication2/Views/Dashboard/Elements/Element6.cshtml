@@ -2,8 +2,11 @@
     TileCard2 obj = (TileCard2)Model;
 }
 
-
-@if (!obj.IsRealValues)
+@if (obj.IsDragDropEnabled)
+{
+    <div itemid="@obj.WidgetID" class="btn btn-default box-item">@obj.Heading - @obj.SubHeading</div>
+}
+else if (!obj.IsRealValues)
 {
     <div class="col-md">
         <div class="persona-card persona-card-small green-card dark-mode">
@@ -25,18 +28,49 @@ else
 {
     <div class="col-md">
         <div class="persona-card persona-card-small @(obj.Count <= 0 ? "red-card" : "green-card") dark-mode">
-            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">@obj.Heading</div>
+            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">
+                @obj.Heading
+                @if (obj.WidgetSelection)
+                {
+                    <input type="checkbox" class="form-check-input" style="float:right" name="selectedWidget" value="@obj.WidgetID" />
+                }
+            </div>
             <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">@obj.SubHeading</h3>
-            <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
-                <a target="_blank" href='@(string.IsNullOrEmpty(obj.Link) ? "#" : obj.Link)' class="blackwhitetext">
-                    @obj.Count
-                </a>
-            </span>
-            <span style="font-size:46px;color: #586672;opacity: .7; padding-top: 8px; margin-right: 27px; float: right;">
-                @String.Format("{0:" + obj.Format + "}", obj.Amount)
-            </span>
-
+            @if (!obj.WidgetSelection)
+            {
+                <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
+                    <a target="_blank" href='@(string.IsNullOrEmpty(obj.Link) ? "#" : obj.Link)' class="blackwhitetext">
+                        @obj.Count
+                    </a>
+                </span>
+                <span style="font-size:46px;color: #586672;opacity: .7; padding-top: 8px; margin-right: 27px; float: right;">
+                    @String.Format("{0:" + obj.Format + "}", obj.Amount)
+                </span>
+            }
+            else
+            {
+                <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
+                    <a target="_blank" href="#" class="blackwhitetext">
+                        Count
+                    </a>
+                </span>
+                <span style="font-size:46px;color: #586672;opacity: .7; padding-top: 8px; margin-right: 27px; float: right;">
+                    Amount
+                </span>
+            }
         </div>
+        @if (obj.WidgetSelection)
+        {
+            <br />
+            <div style="float:right">
+                <span style="font-weight:bold">Optional</span>
+                <label class="switch">
+                    <input type="checkbox" checked value="@obj.WidgetID" name="DefaultWidgets">
+                    <span class="slider round"></span>
+                </label>
+                <span style="font-weight:bold">Default</span>
+            </div>
+        }
     </div>
 }
 
@@ -81,4 +115,66 @@ else
     .yellow-card {
         border-left: 10px solid #ec983d;
     }
+</style>
+
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
 </style>

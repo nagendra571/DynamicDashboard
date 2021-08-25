@@ -4,10 +4,14 @@
 
     <!-- Optionally, you can add icons to the links -->
     <li><a href="/Dashboard/Index"><i class="fa fa-dashboard"></i> <span>Create New Dashboard</span></a></li>
+    <li><a href="/Dashboard/SelectDashboard"><i class="fa fa-dashboard"></i> <span>Edit Dashboard</span></a></li>
+    <li><a href="/Dashboard/MapDashboards"><i class="fa fa-dashboard"></i> <span>Map Dashboards</span></a></li>
     <li><a href="/Dashboard/ElementList/1"><i class="fa fa-dashboard"></i> <span>Create New Widget</span></a></li>
     <li><a href="/Dashboard/WidgetsList"><i class="fa fa-dashboard"></i> <span>All Widgets</span></a></li>
 
-
+    <li class="treeview">
+        @Html.DropDownList("RoleId", new SelectList(new List<string>(), "ID", "BusinessRoleName"), new { @class = "form-control form-control-lg" })
+    </li>
 
     <li class="treeview">
         <a href="#">
@@ -19,11 +23,57 @@
         <ul class="treeview-menu" id="menu">
         </ul>
     </li>
+
+
 </ul>
 
+
+
 <script>
+    function AppendBoards() {
+        if (parseInt($('#RoleId').val()) > 0) {
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("GetDashboardsByRole", "Dashboard")',
+                data: {
+                    RoleId: parseInt($('#RoleId').val())
+                },
+                error: function (result) {
+                    alert(result);
+                },
+                success: function (result) {
+
+                    var menu = null;
+                    $.each(result, function (key, value) {
+                        menu += '<li><a href="/Dashboard/Dashboard/' + value.id + '">' + value.name + '</a></li>';
+                    });
+                    $("#menu").html(menu);
+
+                }
+            });
+        }
+    }
 
     $(function() {
+
+        $.ajax(
+        {
+            type: "POST",
+            url: '@Url.Action("GetBusinessRolesList", "Dashboard")',
+            error: function (result) {
+                alert(result);
+            },
+            success: function (result) {
+                var menu = '';
+                $.each(result, function (key, value) {
+
+                    menu += "<option value='" + value.id + "'>" + value.businessRoleName+"</option>";
+                });
+                $("#RoleId").html(menu);
+            }
+            });
 
         $.ajax(
         {
@@ -34,11 +84,16 @@
             },
             success: function (result) {
                 var menu = null;
-                $.each( result, function( key, value ) {
-                    menu += '<li><a href="/Dashboard/Dashboard/'+value.id+'">'+value.name+'</a></li>';
+                $.each(result, function (key, value) {
+                    menu += '<li><a href="/Dashboard/Dashboard/' + value.id + '">' + value.name + '</a></li>';
+
                 });
                 $("#menu").html(menu);
             }
         });
+
+        $('#RoleId').change(function () {
+            AppendBoards();
+        })
 });
 </script>

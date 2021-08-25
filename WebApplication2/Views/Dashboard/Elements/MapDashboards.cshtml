@@ -1,0 +1,226 @@
+
+@model IEnumerable<DashboardsInfo>
+
+@{
+    ViewBag.Title = "Dashboard Elements";
+}
+
+<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+
+<!-- Content Header (Page header) -->
+<br />
+
+<section class="content-header">
+    <div>
+        <span>Map dashboards with Roles</span>
+    </div>
+</section>
+
+<br />
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Select Role</h1>
+                </div>
+                <div id="containerz" class="panel-body box-container">
+                    @Html.DropDownList("RoleId", new SelectList(ViewBag.Roles, "ID", "BusinessRoleName"), new { @class = "form-control form-control-lg" })
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Dashboards Mapped</h1>
+                </div>
+                <div id="container1" class="panel-body box-container">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Dashboards available</h1>
+                </div>
+                <div id="container2" class="panel-body box-container">
+                    @foreach (var board in Model.ToList())
+                    {
+                        <div itemid="@board.Id" class="btn btn-default box-item">@board.Name</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-3" style="display:none">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Dashboards available</h1>
+                </div>
+                <div id="container3" class="panel-body box-container">
+                    @foreach (var board in Model.ToList())
+                    {
+                        <div itemid="@board.Id" itemname="@board.Name" class="btn btn-default">@board.Name</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+<div align="center">
+    <button type="button" class="btn btn-success custom-btn waves-effect waves-light" data-dismiss="modal" data-toggle="modal" onclick="Next()">Submit</button>
+</div>
+
+<style type="text/css">
+    /* Styles go here */
+
+    /*.box-container {
+        height: 200px;
+    }*/
+
+    .box-item {
+        width: 100%;
+        z-index: 1000;
+        padding: 10px;
+        margin-bottom: 5px;
+        text-shadow: 0 0 black;
+    }
+</style>
+
+<script type="text/javascript">
+
+    function moveAllItems(origin, dest) {
+        $(origin).children().clone().appendTo(dest);
+    }
+
+    function Next() {
+        var arr1 = [];
+
+        $("#container1").find(".box-item").each(function () { arr1.push($(this).attr("itemid")); });
+
+        arr1 = arr1.filter(function (element) {
+            return element !== undefined;
+        });
+
+
+        $.ajax(
+        {
+            type: "POST",
+            url: '@Url.Action("MapDashboards", "Dashboard")',
+            data: {
+                RoleId: $('#RoleId').val(),
+                SelectedDashboardIds: arr1.join(","),
+            },
+            error: function (result) {
+                alert("error");
+            },
+            success: function (result) {
+
+                if (result != "False") {
+                    window.location = "/Home/Index";
+                }
+                else {
+                    alert("There is a Problem!");
+                }
+            }
+        });
+
+    }
+
+    function AppendBoards() {
+        if (parseInt($('#RoleId').val()) > 0) {
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("GetDashboardsByRole", "Dashboard")',
+                data: {
+                    RoleId: parseInt($('#RoleId').val())
+                },
+                error: function (result) {
+                    alert(result);
+                },
+                success: function (result) {
+                    var options = '';
+                    $.each(result, function (key, value) {
+                        options += "<div itemid=" + value.id + " class='btn btn-default box-item'>" + value.name + "</div>";
+                    });
+                    $("#container1").html(options);
+
+
+                    $('#container2').empty();
+                    moveAllItems('#container3', '#container2');
+
+                    $.each(result, function (key, value) {
+                        $("#container2 > div[itemid='" + value.id+"']").remove();
+                    });
+
+                    $('#container2> div').addClass("box-item");
+
+                    $('.box-item').draggable({
+                        cursor: 'move',
+                        helper: "clone"
+                    });
+
+                }
+            });
+        }
+    }
+
+    $(document).ready(function () {
+
+        AppendBoards();
+
+        $('#RoleId').change(function () {
+            AppendBoards();
+        })
+
+        $('.box-item').draggable({
+            cursor: 'move',
+            helper: "clone"
+        });
+
+        $("#container1").droppable({
+            drop: function (event, ui) {
+                var x;
+                var itemid = $(event.originalEvent.toElement).attr("itemid");
+                $('.box-item').each(function () {
+                    if ($(this).attr("itemid") === itemid) {
+                        $(this).appendTo("#container1");
+                    }
+                });
+            }
+        });
+
+        $("#container2").droppable({
+            drop: function (event, ui) {
+                var itemid = $(event.originalEvent.toElement).attr("itemid");
+                $('.box-item').each(function () {
+                    if ($(this).attr("itemid") === itemid) {
+                        $(this).appendTo("#container2");
+                    }
+                });
+            }
+        });
+
+        $("#container3").droppable({
+            drop: function (event, ui) {
+                var itemid = $(event.originalEvent.toElement).attr("itemid");
+                $('.box-item').each(function () {
+                    if ($(this).attr("itemid") === itemid) {
+                        $(this).appendTo("#container3");
+                    }
+                });
+            }
+        });
+
+    });
+
+
+</script>

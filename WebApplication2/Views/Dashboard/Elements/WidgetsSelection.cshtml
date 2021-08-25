@@ -1,0 +1,175 @@
+
+@model IEnumerable<Widget>
+
+@{
+    ViewBag.Title = "Dashboard Elements";
+
+    var list = Model;
+
+    bool EnableNextButton = Model.FirstOrDefault().WidgetSelection;
+
+    bool IsRealValues = Model.FirstOrDefault().IsRealValues;
+
+    int dashboardID = Model.FirstOrDefault().DashboardID;
+}
+
+<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        @("Create "+ViewBag.Dashboardname+ " Dashboard" )
+    </h1>
+    <input type="hidden" value="@(ViewBag.Dashboardname)" id="Dashboardname" />
+</section>
+<br />
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Default Widgets</h1>
+                </div>
+                <div id="container1" class="panel-body box-container">
+                    @foreach (var widg in Model.Where(m => m.IsDefaulted && m.IsAccessble).ToList())
+                    {
+                        Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg);
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Optional Widgets</h1>
+                </div>
+                <div id="container2" class="panel-body box-container">
+                    @foreach (var widg in Model.Where(m => !m.IsDefaulted && m.IsAccessble).ToList())
+                    {
+                        Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg);
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Add Widgets</h1>
+                </div>
+                <div id="container3" class="panel-body box-container">
+                    @foreach (var widg in Model.Where(m => !m.IsAccessble).ToList())
+                    {
+                        Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg);
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div align="center">
+    <button type="button" class="btn btn-success custom-btn waves-effect waves-light" data-dismiss="modal" data-toggle="modal" onclick="Next(0)">Update Dashboard</button>
+</div>
+
+
+
+<style type="text/css">
+    /* Styles go here */
+
+    /*.box-container {
+        height: 200px;
+    }*/
+
+    .box-item {
+        width: 100%;
+        z-index: 1000;
+        padding: 10px;
+        margin-bottom: 5px;
+        text-shadow: 0 0 black;
+    }
+</style>
+
+<script type="text/javascript">
+
+    function Next(Id) {
+        var arr = [];
+        var arr2 = [];
+
+
+        $("#container1").find(".box-item").each(function () { arr.push($(this).attr("itemid")); });
+        $("#container2").find(".box-item").each(function () { arr2.push($(this).attr("itemid")); });
+
+
+        $.ajax(
+        {
+            type: "POST",
+            url: '@Url.Action("UpdateDashboard", "Dashboard")',
+            data: {
+                Id: Id,
+                SelectedElements: selectedWidgets,
+                DefaultedElements: arr2.join(","),
+                Name: $("#Dashboardname").val()
+            },
+            error: function (result) {
+                alert("error");
+            },
+            success: function (result) {
+
+                if (result != "False") {
+                    window.location = "/Dashboard/Dashboard/"+result;
+                }
+                else {
+                    alert("There is a Problem!");
+                }
+            }
+        });
+
+    }
+
+    $(document).ready(function () {
+
+        $('.box-item').draggable({
+            cursor: 'move',
+            helper: "clone"
+        });
+
+        $("#container1").droppable({
+            drop: function (event, ui) {
+                var itemid = $(event.originalEvent.toElement).attr("itemid");
+                $('.box-item').each(function () {
+                    if ($(this).attr("itemid") === itemid) {
+                        $(this).appendTo("#container1");
+                    }
+                });
+            }
+        });
+
+        $("#container2").droppable({
+            drop: function (event, ui) {
+                var itemid = $(event.originalEvent.toElement).attr("itemid");
+                $('.box-item').each(function () {
+                    if ($(this).attr("itemid") === itemid) {
+                        $(this).appendTo("#container2");
+                    }
+                });
+            }
+        });
+
+        $("#container3").droppable({
+            drop: function (event, ui) {
+                var itemid = $(event.originalEvent.toElement).attr("itemid");
+                $('.box-item').each(function () {
+                    if ($(this).attr("itemid") === itemid) {
+                        $(this).appendTo("#container3");
+                    }
+                });
+            }
+        });
+
+    });
+</script>

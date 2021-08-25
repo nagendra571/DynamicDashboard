@@ -25,7 +25,7 @@
                     </div>
                     <br>
                     <div align="center">
-                        <button type="button" class="btn custom-btn waves-effect waves-light" data-dismiss="modal" data-toggle="modal" onclick="DashboardTemplates()">Next</button>
+                        <button type="button" class="btn btn-success custom-btn waves-effect waves-light" data-dismiss="modal" data-toggle="modal" onclick="DashboardTemplates()">Next</button>
                     </div>
                 </div>
             </form>
@@ -37,6 +37,8 @@
     function DashboardTemplates()
     {
         localStorage.setItem("dashboard_name", $("#dashboard-name").val());
-        window.location = "/Dashboard/TemplateList/";
+        //window.location = "/Dashboard/TemplateList/";
+        window.location = "/Dashboard/WidgetsSelection?DashboardName=" + $("#dashboard-name").val();
+
     }
 </script>

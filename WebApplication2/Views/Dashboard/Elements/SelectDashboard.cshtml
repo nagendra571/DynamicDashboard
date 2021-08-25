@@ -1,0 +1,39 @@
+﻿
+@model Dictionary<int, string>
+<!-- Content Header (Page header) -->
+<br />
+
+<section class="content-header">
+    <div>
+        <span>Select Dashboard to Edit</span>
+    </div>
+</section>
+
+<br />
+
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-xs-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Dashnoard</h1>
+                </div>
+                <div id="container1" class="panel-body box-container">
+                    @foreach (var item in Model)
+                    {
+                        <div class="btn btn-default box-item" onclick="Edit('@item.Key')">@item.Value</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function Edit(ID) {
+        window.location = "/Dashboard/EditDashboard?id=" + ID;
+    }
+</script>

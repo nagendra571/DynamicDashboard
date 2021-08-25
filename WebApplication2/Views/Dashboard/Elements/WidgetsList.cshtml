@@ -5,12 +5,18 @@
     ViewBag.Title = "Dashboard Elements";
 
     var list = Model;
+
+    bool EnableNextButton = Model.FirstOrDefault().WidgetSelection;
+
+    bool IsRealValues = Model.FirstOrDefault().IsRealValues;
+
+    int dashboardID = Model.FirstOrDefault().DashboardID;
 }
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        Elements List
+        @(EnableNextButton ? "Elements List" : ViewBag.Dashboardname+ " Dashboard" )
     </h1>
 </section>
 
@@ -18,32 +24,88 @@
 <form>
     <section class="content container-fluid">
         <div class="row match-to-row">
-            @for (int i = 1; i <= 3; i++)
+
+            @foreach (var widg in Model)
             {
-                @foreach (var widg in Model)
-                {
-                    <div class="col-lg-4 col-sm-6">
-                        <div class="thumbnail">
-                            @{ Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg); }
-                        </div>
+                <div class="col-lg-4 col-sm-6">
+                    <div class="thumbnail">
+                        @{ Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg); }
                     </div>
-
-
-
-
-                    <!--<div class="row">-->
-                    <!-- Element8 -->
-                    <!--<div class="col-md-12 col-lg-12 col-xs-12">
-                            <div class="white-box">
-                                <div class="white-box" style="width:30%; padding-left:10px; padding-right:10px; padding-bottom:10px;">
-                                    <br>@{ Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg); }
-                                </div>
-                            </div>
-                        </div>
-                    </div>-->
-                }
+                </div>
             }
+
         </div>
+
+        @*@if (EnableNextButton)
+        {
+            <br>
+            <div align="center">
+                <button type="button" class="btn btn-success custom-btn waves-effect waves-light" data-dismiss="modal" data-toggle="modal" onclick="Next()">Create Dashboard</button>
+            </div>
+        }*@
+
+
     </section>
 </form>
 
+
+
+<script>
+
+    function Edit(ID) {
+        window.location = "/Dashboard/EditDashboard?id=" + ID;
+    }
+
+    function Next() {
+        var arr = [];
+        var arr2 = [];
+
+        var selectedWidgets = $('input[type=checkbox][name=selectedWidget]:checked').map(function () {
+            arr.push(this.value);
+            return this.value;
+        }).get().join(",");
+
+
+        for (var i = 0, len = arr.length; i < len; i++) {
+            arr2.push(
+                $('input[type=checkbox][name=DefaultWidgets]:checked').filter(function () {
+                return this.value == arr[i];
+            }).val()
+            )
+        }
+
+        arr2 = arr2.filter(function (element) {
+            return element !== undefined;
+        });
+
+        //var defaultWidgets = $("input[type=checkbox][name=DefaultWidgets][value='" + selectedWidgets+"']:checked").map(function () {
+        //    return this.value;
+        //}).get().join(",");
+
+
+        $.ajax(
+        {
+            type: "POST",
+            url: '@Url.Action("Createdashboard", "Dashboard")',
+            data: {
+                Name: localStorage.getItem("dashboard_name"),
+                SelectedElements: selectedWidgets,
+                DefaultedElements: arr2.join(",")
+            },
+            error: function (result) {
+                alert("error");
+            },
+            success: function (result) {
+
+                if (result != "False") {
+                    window.location = "/Dashboard/Dashboard/"+result;
+                }
+                else {
+                    alert("There is a Problem!");
+                }
+            }
+        });
+
+    }
+
+</script>
