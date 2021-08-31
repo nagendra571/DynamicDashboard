@@ -43,7 +43,7 @@ namespace Dynamic_User_Defined_Dashboards.Models
 
                 entity.Property(e => e.DashboardId).HasColumnType("int");
 
-                entity.Property(e => e.ElementId).HasColumnType("int");
+                entity.Property(e => e.WidgetID).HasColumnType("int");
 
                 entity.Property(e => e.IsDefaultElement).HasColumnType("bool");                
 

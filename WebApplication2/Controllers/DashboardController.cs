@@ -51,7 +51,7 @@ namespace EnergyAxis.Controllers
 
             foreach (var widg in widgetListByDashboard)
             {
-                widgets.AddRange(getWidgetListByID(widg.ElementId));
+                widgets.AddRange(getWidgetListByID(widg.WidgetID));
             }
             widgets.ForEach(m => m.DashboardID = id);
 
@@ -96,9 +96,9 @@ namespace EnergyAxis.Controllers
             {
                 foreach (var widg in widgetListByDashboard)
                 {
-                    widgets.Where(m => m.WidgetID == widg.ElementId).FirstOrDefault().IsAccessble = true;
-                    widgets.Where(m => m.WidgetID == widg.ElementId).FirstOrDefault().DashboardID = id;
-                    widgets.Where(m => m.WidgetID == widg.ElementId).FirstOrDefault().IsDefaulted = widg.IsDefaultElement;
+                    widgets.Where(m => m.WidgetID == widg.WidgetID).FirstOrDefault().IsAccessble = true;
+                    widgets.Where(m => m.WidgetID == widg.WidgetID).FirstOrDefault().DashboardID = id;
+                    widgets.Where(m => m.WidgetID == widg.WidgetID).FirstOrDefault().IsDefaulted = widg.IsDefaultElement;
                 }
             }
 
@@ -251,7 +251,7 @@ namespace EnergyAxis.Controllers
             {
                 ElementID = card.ElementTemplateID,
                 Formation = JsonSerializer.Serialize<TileCard1>(card),
-                ClassType = card.GetType().ToString(),
+                ClassType = card.GetType().AssemblyQualifiedName,
                 IsDeActivated = false
             };
 
@@ -358,7 +358,7 @@ namespace EnergyAxis.Controllers
 
             foreach (var widg in Widgets)
             {
-                if (widg.ClassType == typeof(TileCard1).ToString())
+                if (widg.ClassType == typeof(TileCard1).ToString() || widg.ClassType == typeof(TileCard1).AssemblyQualifiedName)
                 {
                     TileCard1 w = (TileCard1)WidgetsDataManager.PrepareData(widg);
                     w.IsRealValues = true;
@@ -375,7 +375,7 @@ namespace EnergyAxis.Controllers
 
                     widgetsInfo.Add(w);
                 }
-                else if (widg.ClassType == typeof(TileCard2).ToString())
+                else if (widg.ClassType == typeof(TileCard2).ToString() || widg.ClassType == typeof(TileCard1).AssemblyQualifiedName)
                 {
                     TileCard2 w = (TileCard2)WidgetsDataManager.PrepareData(widg);
                     w.IsRealValues = true;
@@ -497,7 +497,7 @@ namespace EnergyAxis.Controllers
                         db.DashboardLinkedElements.Add(new DashboardLinkedElements()
                         {
                             DashboardId = DashboardID,
-                            ElementId = item,
+                            WidgetID = item,
                             IsDefaultElement = false
                         });
                         db.SaveChanges();
@@ -510,7 +510,7 @@ namespace EnergyAxis.Controllers
                         db.DashboardLinkedElements.Add(new DashboardLinkedElements()
                         {
                             DashboardId = DashboardID,
-                            ElementId = item,
+                            WidgetID = item,
                             IsDefaultElement = true
                         });
                         db.SaveChanges();
