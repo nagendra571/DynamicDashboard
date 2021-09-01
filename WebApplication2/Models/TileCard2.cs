@@ -35,15 +35,15 @@ namespace WebApplication2.Models
                     Query = Query + (!isAnd ? " where " : " and ") + FilterColumnName + " ='" + Filter + "'";
                     isAnd = true;
                 }
-                if (base.isFilteredByUserId)
-                {
-                    Query = Query + (!isAnd ? " where UserEmail = '" : " and UserEmail = '") + base.UserID + "'";
-                    isAnd = true;
-                }
-                if (base.isFilteredByRole)
-                {
-                    Query = Query + (!isAnd ? " where RoleID = " : " and RoleID = ") + base.RoleID;
-                }
+                //if (base.isFilteredByUserId)
+                //{
+                //    Query = Query + (!isAnd ? " where UserEmail = '" : " and UserEmail = '") + base.UserID + "'";
+                //    isAnd = true;
+                //}
+                //if (base.isFilteredByRole)
+                //{
+                //    Query = Query + (!isAnd ? " where RoleID = " : " and RoleID = ") + base.RoleID;
+                //}
                 return Query;
             }
         }

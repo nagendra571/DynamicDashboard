@@ -9,7 +9,7 @@ namespace WebApplication2.Models
     {
         public static object PrepareData(WidgetStructure obj) 
         {
-            Type ObjInstance = GetType(obj.ClassType);
+            Type ObjInstance = obj.ClassType.Contains("Tilecard1", StringComparison.OrdinalIgnoreCase) ? typeof(TileCard1) : typeof(TileCard2);
 
             var WidgetObject = JsonSerializer.Deserialize(obj.Formation, ObjInstance);            
 

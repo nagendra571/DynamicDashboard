@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Text.Json;
 using System.Collections.Generic;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace EnergyAxis.Controllers
 {
@@ -51,7 +52,7 @@ namespace EnergyAxis.Controllers
 
             foreach (var widg in widgetListByDashboard)
             {
-                widgets.AddRange(getWidgetListByID(widg.WidgetID));
+                widgets.AddRange(getWidgetList(widg.WidgetID));
             }
             widgets.ForEach(m => m.DashboardID = id);
 
@@ -350,15 +351,24 @@ namespace EnergyAxis.Controllers
             return Ok(boards.ToList());
         }
 
-        private List<Widget> getWidgetList()
+        private List<Widget> getWidgetList(int WidgetID = 0)
         {
-            var Widgets = db.WidgetStructure.ToList();
+            List<WidgetStructure> Widgets;
+
+            if (WidgetID > 0)
+            {
+                Widgets = db.WidgetStructure.Where(M => M.ID == WidgetID).ToList();
+            }
+            else
+            {
+                Widgets = db.WidgetStructure.ToList();
+            }
 
             List<Widget> widgetsInfo = new List<Widget>();
 
             foreach (var widg in Widgets)
             {
-                if (widg.ClassType == typeof(TileCard1).ToString() || widg.ClassType == typeof(TileCard1).AssemblyQualifiedName)
+                if (widg.ClassType == typeof(TileCard1).ToString() || widg.ClassType == typeof(TileCard1).AssemblyQualifiedName || widg.ClassType.Contains("tilecard1", StringComparison.OrdinalIgnoreCase))
                 {
                     TileCard1 w = (TileCard1)WidgetsDataManager.PrepareData(widg);
                     w.IsRealValues = true;
@@ -373,11 +383,11 @@ namespace EnergyAxis.Controllers
                     w.Value = result.FirstOrDefault().Value;
                     w.PerformanceValue = result.FirstOrDefault().PerformanceValue;
                     w.WidgetID = widg.ID;
-                    
+
 
                     widgetsInfo.Add(w);
                 }
-                else if (widg.ClassType == typeof(TileCard2).ToString() || widg.ClassType == typeof(TileCard1).AssemblyQualifiedName)
+                else if (widg.ClassType == typeof(TileCard2).ToString() || widg.ClassType == typeof(TileCard1).AssemblyQualifiedName || widg.ClassType.Contains("tilecard2", StringComparison.OrdinalIgnoreCase))
                 {
                     TileCard2 w = (TileCard2)WidgetsDataManager.PrepareData(widg);
                     w.IsRealValues = true;
@@ -399,7 +409,7 @@ namespace EnergyAxis.Controllers
             return widgetsInfo;
         }
 
-        private List<Widget> getWidgetListByID(int WidgetID)
+        private List<Widget> getWidgetListByID1(int WidgetID)
         {
             var Widgets = db.WidgetStructure.Where(M => M.ID == WidgetID).ToList();
 
