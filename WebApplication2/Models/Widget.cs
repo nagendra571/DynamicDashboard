@@ -21,6 +21,12 @@ namespace WebApplication2.Models
         public bool IsAccessble { get; set; }
         public bool IsDefaulted { get; set; }
         public bool IsDragDropEnabled { get; set; }
+        
+        public bool isFilteredByUserId { get; set; }
+        public bool isFilteredByRole { get; set; }
+
+        public string UserID { get; set; }
+        public int RoleID { get; set; }
 
 
         public Dictionary<string, IEnumerable<string>> TableAndColumns { get; set; }

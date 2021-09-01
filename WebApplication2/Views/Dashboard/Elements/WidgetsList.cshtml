@@ -6,11 +6,11 @@
 
     var list = Model;
 
-    bool EnableNextButton = Model.FirstOrDefault().WidgetSelection;
+    bool EnableNextButton = (Model != null && Model.Count() > 0) ? Model.FirstOrDefault().WidgetSelection : false;
 
-    bool IsRealValues = Model.FirstOrDefault().IsRealValues;
+    bool IsRealValues = (Model != null && Model.Count() > 0) ? Model.FirstOrDefault().IsRealValues : false;
 
-    int dashboardID = Model.FirstOrDefault().DashboardID;
+    int dashboardID = (Model != null && Model.Count() > 0) ? Model.FirstOrDefault().DashboardID : 0;
 }
 
 <!-- Content Header (Page header) -->
@@ -37,12 +37,12 @@
         </div>
 
         @*@if (EnableNextButton)
-        {
-            <br>
-            <div align="center">
-                <button type="button" class="btn btn-success custom-btn waves-effect waves-light" data-dismiss="modal" data-toggle="modal" onclick="Next()">Create Dashboard</button>
-            </div>
-        }*@
+            {
+                <br>
+                <div align="center">
+                    <button type="button" class="btn btn-success custom-btn waves-effect waves-light" data-dismiss="modal" data-toggle="modal" onclick="Next()">Create Dashboard</button>
+                </div>
+            }*@
 
 
     </section>

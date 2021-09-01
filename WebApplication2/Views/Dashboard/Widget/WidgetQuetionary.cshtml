@@ -9,7 +9,7 @@
     <div class="form-group">
         <label for="Heading">Heading</label>
         @Html.TextBoxFor(m => m.Heading, new { @class = "form-control" })
-        @Html.HiddenFor(m=> m.ElementTemplateID)
+        @Html.HiddenFor(m => m.ElementTemplateID)
     </div>
     <div class="form-group">
         <label for="Heading">Sub Heading</label>
@@ -20,13 +20,13 @@
         <label for="SourceName">Source</label>
         @Html.DropDownListFor(m => m.SourceName, list, "Select Source", new { @class = "form-control" })
     </div>
+    <div class="form-group">
+        <label for="isFilteredByRole">Filter result by Role?</label>
+        @Html.CheckBoxFor(m=>m.isFilteredByRole)
+    </div>
+    <div class="form-group">
+        <label for="isFilteredByUserId">Filter result by UserId?</label>
+        @Html.CheckBoxFor(m => m.isFilteredByUserId)
+    </div>
 </form>
 
-@*<div class="form-group">
-    <label for="exampleFormControlSelect2">Value Column</label>
-    @Html.DropDownListFor(m => m.SourceName, list, "Select Source", new { @class = "form-control" })
-</div>
-<div class="form-group">
-    <label for="exampleFormControlTextarea1">Example textarea</label>
-    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-</div>*@

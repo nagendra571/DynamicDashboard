@@ -28,14 +28,23 @@ namespace WebApplication2.Models
         {
             get
             {
+                string Query = "SELECT " + ValueColumnName + ", " + PerformanceValueColumnName + " from " + base.SourceName;
+                bool isAnd = false;
                 if (!string.IsNullOrEmpty(FilterColumnName) && !string.IsNullOrEmpty(Filter))
                 {
-                    return "SELECT " + ValueColumnName + ", " + PerformanceValueColumnName + " from " + base.SourceName + " where "+ FilterColumnName+" ='"+Filter+"'";
+                    Query = Query + (!isAnd ? " where " : " and ") + FilterColumnName + " ='" + Filter + "'";
+                    isAnd = true;
                 }
-                else
+                if (base.isFilteredByUserId)
                 {
-                    return "SELECT " + ValueColumnName + ", " + PerformanceValueColumnName + " from " + base.SourceName;
+                    Query = Query + (!isAnd ? " where UserEmail = '" : " and UserEmail = '") + base.UserID +"'";
+                    isAnd = true;
                 }
+                if (base.isFilteredByRole)
+                {
+                    Query = Query + (!isAnd ? " where RoleID = " : " and RoleID = ") + base.RoleID;
+                }
+                return Query;
             }
         }
     }

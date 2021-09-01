@@ -363,6 +363,8 @@ namespace EnergyAxis.Controllers
                     TileCard1 w = (TileCard1)WidgetsDataManager.PrepareData(widg);
                     w.IsRealValues = true;
                     w.RequiredCaptureValues = false;
+                    w.RoleID = 1;
+                    w.UserID = "nagendra.chinnam@otis.com";
 
                     var result = db.RawSqlQuery(
                         ((TileCard1)w).Query,
@@ -371,7 +373,7 @@ namespace EnergyAxis.Controllers
                     w.Value = result.FirstOrDefault().Value;
                     w.PerformanceValue = result.FirstOrDefault().PerformanceValue;
                     w.WidgetID = widg.ID;
-
+                    
 
                     widgetsInfo.Add(w);
                 }
@@ -380,6 +382,8 @@ namespace EnergyAxis.Controllers
                     TileCard2 w = (TileCard2)WidgetsDataManager.PrepareData(widg);
                     w.IsRealValues = true;
                     w.RequiredCaptureValues = false;
+                    w.RoleID = 1;
+                    w.UserID = "nagendra.chinnam@otis.com";
 
                     var result = db.RawSqlQuery(
                         ((TileCard2)w).Query,
