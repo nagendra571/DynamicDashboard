@@ -10,7 +10,7 @@
     <li><a href="/Dashboard/WidgetsList"><i class="fa fa-dashboard"></i> <span>All Widgets</span></a></li>
 
     <li class="treeview">
-        @Html.DropDownList("RoleId", new SelectList(new List<string>(), "ID", "BusinessRoleName"), new { @class = "form-control form-control-lg" })
+        @Html.DropDownList("RoleId", new SelectList(new List<string>(), "ID", "BusinessRoleName"), new { @class = "form-control form-control-lg menuroledropdown" })
     </li>
 
     <li class="treeview">
@@ -30,15 +30,15 @@
 
 
 <script>
-    function AppendBoards() {
-        if (parseInt($('#RoleId').val()) > 0) {
+    function AppendBoardsToDropdonw() {
+        if (parseInt($('.menuroledropdown').val()) > 0) {
 
             $.ajax(
             {
                 type: "POST",
                 url: '@Url.Action("GetDashboardsByRole", "Dashboard")',
                 data: {
-                    RoleId: parseInt($('#RoleId').val())
+                    RoleId: parseInt($('.menuroledropdown').val())
                 },
                 error: function (result) {
                     alert(result);
@@ -71,7 +71,7 @@
 
                     menu += "<option value='" + value.id + "'>" + value.businessRoleName+"</option>";
                 });
-                $("#RoleId").html(menu);
+                $(".menuroledropdown").html(menu);
             }
             });
 
@@ -92,8 +92,8 @@
             }
         });
 
-        $('#RoleId').change(function () {
-            AppendBoards();
+        $('.menuroledropdown').change(function () {
+            AppendBoardsToDropdonw();
         })
 });
 </script>

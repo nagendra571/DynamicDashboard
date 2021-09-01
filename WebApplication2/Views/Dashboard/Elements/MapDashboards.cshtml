@@ -28,7 +28,7 @@
                     <h1 class="panel-title">Select Role</h1>
                 </div>
                 <div id="containerz" class="panel-body box-container">
-                    @Html.DropDownList("RoleId", new SelectList(ViewBag.Roles, "ID", "BusinessRoleName"), new { @class = "form-control form-control-lg" })
+                    @Html.DropDownList("RoleId", new SelectList(ViewBag.Roles, "ID", "BusinessRoleName"), new { @class = "form-control form-control-lg ChangeRoleDropdown" })
                 </div>
             </div>
         </div>
@@ -114,7 +114,7 @@
             type: "POST",
             url: '@Url.Action("MapDashboards", "Dashboard")',
             data: {
-                RoleId: $('#RoleId').val(),
+                RoleId: $('.ChangeRoleDropdown').val(),
                 SelectedDashboardIds: arr1.join(","),
             },
             error: function (result) {
@@ -134,14 +134,14 @@
     }
 
     function AppendBoards() {
-        if (parseInt($('#RoleId').val()) > 0) {
+        if (parseInt($('.ChangeRoleDropdown').val()) > 0) {
 
             $.ajax(
             {
                 type: "POST",
                 url: '@Url.Action("GetDashboardsByRole", "Dashboard")',
                 data: {
-                    RoleId: parseInt($('#RoleId').val())
+                    RoleId: parseInt($('.ChangeRoleDropdown').val())
                 },
                 error: function (result) {
                     alert(result);
@@ -177,7 +177,7 @@
 
         AppendBoards();
 
-        $('#RoleId').change(function () {
+        $('.ChangeRoleDropdown').change(function () {
             AppendBoards();
         })
 
