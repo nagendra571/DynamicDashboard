@@ -38,19 +38,19 @@
                 <div class="row">
                     <!-- Element3 -->
                     <div class="col-md-6 col-lg-6 col-xs-12">
-                        <button type="btn" onclick="" class="btn custom-btn waves-effect waves-light m-b-10 pull-right" id="3">Add</button>
+                        @Html.ActionLink("Select", "CreateWidget", "Dashboard", new { TemplatedID = 3 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
                         <div class="white-box" style="width: 400px; height: 300px">
                             <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
-                                @{ Html.RenderPartial("Element3.cshtml"); }
+                                @{ Html.RenderPartial("Element3.cshtml", new PieChart()); }
                             </div>
                         </div>
                     </div>
                     <!-- Element4 -->
                     <div class="col-md-6 col-lg-6 col-xs-12">
-                        <button type="btn" onclick="" class="btn custom-btn waves-effect waves-light m-b-10 pull-right" id="4">Add</button>
+                        @Html.ActionLink("Select", "CreateWidget", "Dashboard", new { TemplatedID = 4 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
                         <div class="white-box" style="width: 400px; height: 300px">
                             <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
-                                <br>@{ Html.RenderPartial("Element4.cshtml"); }
+                                <br>@{ Html.RenderPartial("Element4.cshtml", new PieChart()); }
                             </div>
                         </div>
                     </div>
@@ -59,16 +59,16 @@
                 <div class="row">
                     <!-- Element3 -->
                     <div class="col-md-6 col-lg-6 col-xs-12">
-                        <button type="btn" onclick="" class="btn custom-btn waves-effect waves-light m-b-10 pull-right" id="3">Add</button>
+                        @Html.ActionLink("Select", "CreateWidget", "Dashboard", new { TemplatedID = 5 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
                         <div class="white-box" style="width: 400px; height: 300px">
                             <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
-                                @{ Html.RenderPartial("Element5.cshtml"); }
+                                @{ Html.RenderPartial("Element5.cshtml", new PieChart()); }
                             </div>
                         </div>
                     </div>
                     <!-- Element4 -->
                     <div class="col-md-6 col-lg-6 col-xs-12">
-                        <button type="btn" onclick="" class="btn custom-btn waves-effect waves-light m-b-10 pull-right" id="4">Add</button>
+                        <button type="btn" onclick="" class="btn custom-btn waves-effect waves-light m-b-10 pull-right" id="9">Add</button>
                         <div class="white-box" style="width: 400px; height: 300px">
                             <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
                                 <br>&nbsp;

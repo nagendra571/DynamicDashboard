@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Collections.Generic;
 using System;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 
 namespace EnergyAxis.Controllers
 {
@@ -127,6 +128,23 @@ namespace EnergyAxis.Controllers
         {
             var SelectedDashboards = mapping.SelectedDashboardIds.Split(',').Select(Int32.Parse).ToList<int>();
 
+            var currentBoards = db.BusinessRoleDashboardMapping.Where(m => m.RoleId == mapping.RoleId).ToList();
+
+            try
+            {
+                if (currentBoards != null && currentBoards.Count() > 0)
+                {
+                    foreach (var board in currentBoards)
+                    {
+                        db.BusinessRoleDashboardMapping.Remove(board);
+                        db.SaveChanges();
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+            }
+
             try
             {
                 if (SelectedDashboards != null && SelectedDashboards.Count() > 0)
@@ -208,7 +226,6 @@ namespace EnergyAxis.Controllers
 
             if (TemplatedID == 7)
             {
-
                 tileCard = new TileCard1()
                 {
                     ElementTemplateID = TemplatedID,
@@ -218,8 +235,16 @@ namespace EnergyAxis.Controllers
             }
             else if (TemplatedID == 6)
             {
-
                 tileCard = new TileCard2()
+                {
+                    ElementTemplateID = TemplatedID,
+                    TableAndColumns = viewsNames,
+                    RequiredCaptureValues = true
+                };
+            }
+            else if (TemplatedID == 5 || TemplatedID == 4 || TemplatedID == 3)
+            {
+                tileCard = new PieChart()
                 {
                     ElementTemplateID = TemplatedID,
                     TableAndColumns = viewsNames,
@@ -271,6 +296,7 @@ namespace EnergyAxis.Controllers
             ViewData["dashboardId"] = 1;
             return RedirectToAction("WidgetsList");
         }
+
         [HttpPost]
         public IActionResult SaveTileCard2(TileCard2 card)
         {
@@ -300,8 +326,35 @@ namespace EnergyAxis.Controllers
             ViewData["dashboardId"] = 1;
             return RedirectToAction("WidgetsList");
         }
+                
+        [HttpPost]
+        public IActionResult SavePieChart(PieChart card)
+        {
+            var enteredInfo = card;
 
+            WidgetStructure obj = new WidgetStructure()
+            {
+                ElementID = card.ElementTemplateID,
+                Formation = JsonSerializer.Serialize<PieChart>(card),
+                ClassType = card.GetType().ToString(),
+                IsDeActivated = false
+            };
 
+            try
+            {
+                db.WidgetStructure.Add(obj);
+                db.SaveChanges();
+
+                var WidgID = obj.ID;
+            }
+            catch (System.Exception e)
+            {
+
+            }
+
+            ViewData["dashboardId"] = 1;
+            return RedirectToAction("WidgetsList");
+        }
         public JsonResult GetColumns(string TableName)
         {
             var columns = db.GetColumnNames(TableName);
@@ -401,6 +454,27 @@ namespace EnergyAxis.Controllers
                         );
                     w.Count = result.FirstOrDefault().Count;
                     w.Amount = result.FirstOrDefault().Amount;
+                    w.WidgetID = widg.ID;
+
+                    widgetsInfo.Add(w);
+                }
+                else if (widg.ClassType == typeof(PieChart).ToString() || widg.ClassType == typeof(PieChart).AssemblyQualifiedName || widg.ClassType.Contains("PieChart", StringComparison.OrdinalIgnoreCase))
+                {
+                    PieChart w = (PieChart)WidgetsDataManager.PrepareData(widg);
+                    w.IsRealValues = true;
+                    w.RequiredCaptureValues = false;
+                    w.RoleID = 1;
+                    w.UserID = "nagendra.chinnam@otis.com";
+
+                    var result = db.RawSqlQuery(
+                        ((PieChart)w).Query,
+                        x => new PieChart() { Category = x[0].ToString(), Value = (x[1]).ToString() }
+                        );
+
+                    var recors = from record in result
+                                 select new PieChartRecord() { Category = record.Category, Value = record.Value };
+
+                    w.Data = recors;
                     w.WidgetID = widg.ID;
 
                     widgetsInfo.Add(w);

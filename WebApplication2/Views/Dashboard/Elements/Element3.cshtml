@@ -1,39 +1,157 @@
+@{
+    PieChart obj = (PieChart)Model;
+}
 
-<!--Div that will hold the pie chart-->
-<div id="pie_chart_div"></div>
 
-<script type="text/javascript">
 
-    // Load the Visualization API and the corechart package.
-    google.charts.load('current', {'packages':['corechart']});
+@if (obj.IsDragDropEnabled)
+{
+    <div itemid="@obj.WidgetID" class="btn btn-default box-item">@obj.Heading - @obj.SubHeading</div>
+}
+else if (!obj.IsRealValues)
+{
+    <div class="col-md">
+        <div class="persona-card persona-card-large yellow-card dark-mode">
+            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">Line Chart Heading</div>
+            <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">Sub Heading</h3>
+            <div style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; font-weight: 900; float: left;">
+                <div id="chart-wrap" class="demo-section k-content wide">
 
-    // Set a callback to run when the Google Visualization API is loaded.
-    google.charts.setOnLoadCallback(drawChart);
+                    @(Html.Kendo().Chart()
+                .Name("chart3")
+                .Legend(legend => legend
+                    .Visible(false)
+                )
+                .ChartArea(chart => chart
+                    .Background("transparent")
+                    .Height(250)
+                    .Width(390)
+                    )
+                .Series(series =>
+                {
+                    series.Line(new dynamic[] {
+                                new {category="Above Target",value=10.5,color="#5b9916"},
+                                new {category="Above Average",value=30.5,color="#ec983d"},
+                                new {category="Below Target",value=23,color="#cd4c46"},
+                    })
+                    .Labels(labels => labels
+                        .Template("#= category#: \n #= value#%")
+                        .Background("transparent")
+                        .Visible(true)
+                    )
+                    .StartAngle(150);
+                })
+                .Events(e => e.SeriesClick("seriesClick"))
+                .Tooltip(tooltip => tooltip
+                    .Visible(true)
+                    .Format("{0}%")
+                )
+                    )
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="col-md">
+        <div class="persona-card persona-card-large yellow-card dark-mode">
+            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">@obj.Heading</div>
+            <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">@obj.SubHeading</h3>
+            <div style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; font-weight: 900; float: left;">
+                <div id="chart-wrap" class="demo-section k-content wide">
 
-    // Callback that creates and populates a data table,
-    // instantiates the pie chart, passes in the data and
-    // draws it.
-    function drawChart() {
+                    @(Html.Kendo().Chart(obj.Data)
+                .Name("chart3")
+                .Legend(legend => legend
+                    .Visible(false)
+                )
+                .ChartArea(chart => chart
+                    .Background("transparent")
+                    .Height(250)
+                    .Width(390)
+                    )
+                .Series(series =>
+                {
+                    series.Line(m=>m.Value, m=>m.Category)
+                    .Labels(labels => labels
+                        .Template("#= category #: \n #= value#%")
+                        //.Template("#= category #")
+                        .Background("transparent")
+                        .Visible(true)
+                    )
+                    .StartAngle(150);
+                })
+                .Events(e => e.SeriesClick("seriesClick"))
+                .Tooltip(tooltip => tooltip
+                    .Template("${ value }")
+                    .Visible(true)
+                //.Format("{0}")
+                )
+                    )
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
-    // Create the data table.
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Topping');
-    data.addColumn('number', 'Slices');
-    data.addRows([
-        ['Mushrooms', 3],
-        ['Onions', 1],
-        ['Olives', 1],
-        ['Zucchini', 1],
-        ['Pepperoni', 2]
-    ]);
 
-    // Set chart options
-    var options = {'title':'How Much Pizza I Ate Last Night',
-                    'width':400,
-                    'height':300};
 
-    // Instantiate and draw our chart, passing in some options.
-    var chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
-    chart.draw(data, options);
+
+<script>
+
+    function seriesClick(e) {
+
     }
 </script>
+
+<style type="text/css">
+    .persona-card {
+        box-shadow: 0px 5px 8px #00000059;
+        border-radius: 8px;
+        background: #FDFDFD 0% 0% no-repeat padding-box;
+    }
+
+    .persona-card-small {
+        height: 170px;
+    }
+
+    .persona-card-large {
+        height: 360px;
+    }
+
+    .persona-card-banner {
+        height: 65px;
+    }
+
+        .persona-card-banner .nav-link {
+            padding: 7px 13px 9px 13px !important;
+            font-size: 20px;
+            margin: 0px 80px 0px 80px;
+        }
+
+        .persona-card-banner .active .nav-link {
+            font-weight: 600;
+        }
+
+    .green-card {
+        border-left: 10px solid #4caf50;
+    }
+
+    .red-card {
+        border-left: 10px solid #E62727;
+    }
+
+    .yellow-card {
+        border-left: 10px solid #ec983d;
+    }
+
+    .k-chart {
+        width: 390px;
+        height: 253px;
+    }
+
+    svg {
+        overflow: visible !important;
+    }
+</style>

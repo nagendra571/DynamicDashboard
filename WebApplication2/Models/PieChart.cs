@@ -12,7 +12,6 @@ namespace WebApplication2.Models
         /// </summary>
         public string Category { get; set; }
         public string Value { get; set; }
-        public string Colour { get; set; }
 
 
         /// <summary>
@@ -20,9 +19,38 @@ namespace WebApplication2.Models
         /// </summary>
         public string CategoryColumnName { get; set; }
         public string ValueColumnName { get; set; }
-        public string ColourColumnName { get; set; }
+        public string LabelTemplateFormat { get; set; }
 
-        public dynamic[] Data{ get; set; }
 
+        public string FilterColumnName { get; set; }
+        public string Filter { get; set; }
+
+
+
+        public IEnumerable<PieChartRecord> Data{ get; set; }
+
+        public string Query
+        {
+            get
+            {
+                string Query = "SELECT " + CategoryColumnName + ", " + ValueColumnName + " from " + base.SourceName;
+                bool isAnd = false;
+                if (!string.IsNullOrEmpty(FilterColumnName) && !string.IsNullOrEmpty(Filter))
+                {
+                    Query = Query + (!isAnd ? " where " : " and ") + FilterColumnName + " ='" + Filter + "'";
+                    isAnd = true;
+                }
+                return Query;
+            }
+        }
+
+
+    }
+
+    public class PieChartRecord
+    {
+        public string Category { get; set; }
+        public string Value { get; set; }
+        public string Colour { get; set; }
     }
 }
