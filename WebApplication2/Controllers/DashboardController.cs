@@ -217,6 +217,12 @@ namespace EnergyAxis.Controllers
             return View("Elements/ElementList");
         }
 
+        public IActionResult EditWidgets()
+        {
+            ViewBag.isEditWidget = true;
+            return View("Elements/EditWidgets", getWidgetList());
+        }
+
         public IActionResult CreateWidget(int TemplatedID)
         {
 
@@ -254,6 +260,19 @@ namespace EnergyAxis.Controllers
             return View("Widget/Index", tileCard);
         }
 
+        public IActionResult EditWidget(int WidgetID)
+        {
+            var viewsNames = db.GetTableAndColumns();
+
+            Widget tileCard = getWidgetList(WidgetID, false).ToList().FirstOrDefault();
+            tileCard.TableAndColumns = viewsNames;
+            tileCard.RequiredCaptureValues = true;
+
+
+
+            return View("Widget/Index", tileCard);
+        }
+
         public IActionResult SelectDashboard()
         {
             Dictionary<int, string> Dashboards = new Dictionary<int, string>();
@@ -267,6 +286,8 @@ namespace EnergyAxis.Controllers
             return View("Elements/SelectDashboard", Dashboards);
         }
 
+
+
         [HttpPost]
         public IActionResult SaveTileCard1(TileCard1 card)
         {
@@ -278,12 +299,21 @@ namespace EnergyAxis.Controllers
                 ElementID = card.ElementTemplateID,
                 Formation = JsonSerializer.Serialize<TileCard1>(card),
                 ClassType = card.GetType().AssemblyQualifiedName,
-                IsDeActivated = false
+                IsDeActivated = false                
             };
 
             try
             {
-                db.WidgetStructure.Add(obj);
+                if (card.WidgetID > 0)
+                {
+                    obj.ID = card.WidgetID;
+                    db.Entry(db.WidgetStructure.FirstOrDefault(x => x.ID == card.WidgetID)).CurrentValues.SetValues(obj);
+                }
+                else
+                {
+                    db.WidgetStructure.Add(obj);
+                }
+
                 db.SaveChanges();
 
                 var WidgID = obj.ID;
@@ -311,9 +341,25 @@ namespace EnergyAxis.Controllers
                 IsDeActivated = false
             };
 
+            //try
+            //{
+            //    db.WidgetStructure.Add(obj);
+            //    db.SaveChanges();
+
+            //    var WidgID = obj.ID;
+            //}
             try
             {
-                db.WidgetStructure.Add(obj);
+                if (card.WidgetID > 0)
+                {
+                    obj.ID = card.WidgetID;
+                    db.Entry(db.WidgetStructure.FirstOrDefault(x => x.ID == card.WidgetID)).CurrentValues.SetValues(obj);
+                }
+                else
+                {
+                    db.WidgetStructure.Add(obj);
+                }
+
                 db.SaveChanges();
 
                 var WidgID = obj.ID;
@@ -326,7 +372,7 @@ namespace EnergyAxis.Controllers
             ViewData["dashboardId"] = 1;
             return RedirectToAction("WidgetsList");
         }
-                
+
         [HttpPost]
         public IActionResult SavePieChart(PieChart card)
         {
@@ -340,9 +386,25 @@ namespace EnergyAxis.Controllers
                 IsDeActivated = false
             };
 
+            //try
+            //{
+            //    db.WidgetStructure.Add(obj);
+            //    db.SaveChanges();
+
+            //    var WidgID = obj.ID;
+            //}
             try
             {
-                db.WidgetStructure.Add(obj);
+                if (card.WidgetID > 0)
+                {
+                    obj.ID = card.WidgetID;
+                    db.Entry(db.WidgetStructure.FirstOrDefault(x => x.ID == card.WidgetID)).CurrentValues.SetValues(obj);
+                }
+                else
+                {
+                    db.WidgetStructure.Add(obj);
+                }
+
                 db.SaveChanges();
 
                 var WidgID = obj.ID;
@@ -355,6 +417,10 @@ namespace EnergyAxis.Controllers
             ViewData["dashboardId"] = 1;
             return RedirectToAction("WidgetsList");
         }
+
+
+
+
         public JsonResult GetColumns(string TableName)
         {
             var columns = db.GetColumnNames(TableName);
@@ -404,7 +470,7 @@ namespace EnergyAxis.Controllers
             return Ok(boards.ToList());
         }
 
-        private List<Widget> getWidgetList(int WidgetID = 0)
+        private List<Widget> getWidgetList(int WidgetID = 0, bool ExecuteQuery = true)
         {
             List<WidgetStructure> Widgets;
 
@@ -429,12 +495,15 @@ namespace EnergyAxis.Controllers
                     w.RoleID = 1;
                     w.UserID = "nagendra.chinnam@otis.com";
 
-                    var result = db.RawSqlQuery(
-                        ((TileCard1)w).Query,
-                        x => new TileCard1() { Value = Convert.ToDecimal(x[0]), PerformanceValue = Convert.ToDecimal(x[1]) }
-                        );
-                    w.Value = result.FirstOrDefault().Value;
-                    w.PerformanceValue = result.FirstOrDefault().PerformanceValue;
+                    if (ExecuteQuery)
+                    {
+                        var result = db.RawSqlQuery(
+                            ((TileCard1)w).Query,
+                            x => new TileCard1() { Value = Convert.ToDecimal(x[0]), PerformanceValue = Convert.ToDecimal(x[1]) }
+                            );
+                        w.Value = result.FirstOrDefault().Value;
+                        w.PerformanceValue = result.FirstOrDefault().PerformanceValue;
+                    }
                     w.WidgetID = widg.ID;
 
 
@@ -448,12 +517,15 @@ namespace EnergyAxis.Controllers
                     w.RoleID = 1;
                     w.UserID = "nagendra.chinnam@otis.com";
 
-                    var result = db.RawSqlQuery(
+                    if (ExecuteQuery)
+                    {
+                        var result = db.RawSqlQuery(
                         ((TileCard2)w).Query,
                         x => new TileCard2() { Count = Convert.ToDecimal(x[0]), Amount = Convert.ToDecimal(x[1]) }
                         );
-                    w.Count = result.FirstOrDefault().Count;
-                    w.Amount = result.FirstOrDefault().Amount;
+                        w.Count = result.FirstOrDefault().Count;
+                        w.Amount = result.FirstOrDefault().Amount;
+                    }
                     w.WidgetID = widg.ID;
 
                     widgetsInfo.Add(w);
@@ -466,15 +538,18 @@ namespace EnergyAxis.Controllers
                     w.RoleID = 1;
                     w.UserID = "nagendra.chinnam@otis.com";
 
-                    var result = db.RawSqlQuery(
+                    if (ExecuteQuery)
+                    {
+                        var result = db.RawSqlQuery(
                         ((PieChart)w).Query,
                         x => new PieChart() { Category = x[0].ToString(), Value = (x[1]).ToString() }
                         );
 
-                    var recors = from record in result
-                                 select new PieChartRecord() { Category = record.Category, Value = record.Value };
+                        var recors = from record in result
+                                     select new PieChartRecord() { Category = record.Category, Value = record.Value };
 
-                    w.Data = recors;
+                        w.Data = recors;
+                    }
                     w.WidgetID = widg.ID;
 
                     widgetsInfo.Add(w);

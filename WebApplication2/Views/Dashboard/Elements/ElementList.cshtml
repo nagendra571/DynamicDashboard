@@ -1,6 +1,23 @@
 @{
     ViewBag.Title = "Dashboard Elements";
+    string actionName = "CreateWidget";
+    string LinkName = "Select";
 }
+
+
+
+@*@if (ViewBag.isEditWidget == null)
+{
+    actionName = "CreateWidget";
+    LinkName = "Select";
+}
+else
+{
+    actionName = "EditWidget";
+    LinkName = "Edit";
+}*@
+
+
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
@@ -38,7 +55,7 @@
                 <div class="row">
                     <!-- Element3 -->
                     <div class="col-md-6 col-lg-6 col-xs-12">
-                        @Html.ActionLink("Select", "CreateWidget", "Dashboard", new { TemplatedID = 3 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
+                        @Html.ActionLink(LinkName, actionName, "Dashboard", new { TemplatedID = 3 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
                         <div class="white-box" style="width: 400px; height: 300px">
                             <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
                                 @{ Html.RenderPartial("Element3.cshtml", new PieChart()); }
@@ -47,7 +64,7 @@
                     </div>
                     <!-- Element4 -->
                     <div class="col-md-6 col-lg-6 col-xs-12">
-                        @Html.ActionLink("Select", "CreateWidget", "Dashboard", new { TemplatedID = 4 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
+                        @Html.ActionLink(LinkName, actionName, "Dashboard", new { TemplatedID = 4 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
                         <div class="white-box" style="width: 400px; height: 300px">
                             <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
                                 <br>@{ Html.RenderPartial("Element4.cshtml", new PieChart()); }
@@ -59,7 +76,7 @@
                 <div class="row">
                     <!-- Element3 -->
                     <div class="col-md-6 col-lg-6 col-xs-12">
-                        @Html.ActionLink("Select", "CreateWidget", "Dashboard", new { TemplatedID = 5 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
+                        @Html.ActionLink(LinkName, actionName, "Dashboard", new { TemplatedID = 5 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
                         <div class="white-box" style="width: 400px; height: 300px">
                             <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
                                 @{ Html.RenderPartial("Element5.cshtml", new PieChart()); }
@@ -80,7 +97,7 @@
                 <div class="row">
                     <!-- Element6 -->
                     <div class="col-md-6 col-lg-6 col-xs-12">
-                        @Html.ActionLink("Select", "CreateWidget", "Dashboard", new { TemplatedID = 6 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
+                        @Html.ActionLink(LinkName, actionName, "Dashboard", new { TemplatedID = 6 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
                         <div class="white-box" style="width: 400px; height: 300px">
                             <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
                                 <br>@{ Html.RenderPartial("Element6.cshtml", new TileCard2()); }
@@ -89,7 +106,7 @@
                     </div>
                     <!-- Element7 -->
                     <div class="col-md-6 col-lg-6 col-xs-12">
-                        @Html.ActionLink("Select", "CreateWidget", "Dashboard", new { TemplatedID = 7 }, new { @class="btn custom-btn waves-effect waves-light m-b-10 pull-right" }) 
+                        @Html.ActionLink(LinkName, actionName, "Dashboard", new { TemplatedID = 7 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
                         <div class="white-box" style="width: 400px; height: 300px">
                             <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
                                 <br>@{ Html.RenderPartial("Element7.cshtml", new TileCard1()); }

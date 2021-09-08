@@ -42,11 +42,11 @@
                         <div class="col-md-6 col-lg-6 col-xs-12">
                             <div class="form-group">
                                 <label for="ValueColumnName">Value</label>
-                                @Html.DropDownListFor(m => ((TileCard1)m).ValueColumnName, ColumnsList, "Select Value Column", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => ((TileCard1)m).ValueColumnName, ColumnsList, "Select Value Column", new { @class = "form-control", data_value = ((TileCard1)Model).ValueColumnName })
                             </div>
                             <div class="form-group">
                                 <label for="PerformanceValueColumnName">Performance Value</label>
-                                @Html.DropDownListFor(m => ((TileCard1)m).PerformanceValueColumnName, ColumnsList, "Select Performance Value Column", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => ((TileCard1)m).PerformanceValueColumnName, ColumnsList, "Select Performance Value Column", new { @class = "form-control", data_value = ((TileCard1)Model).PerformanceValueColumnName })
                             </div>
 
                             <div class="form-group">
@@ -61,7 +61,7 @@
 
                             <div class="form-group">
                                 <label for="FilterColumnName">Category Column</label>
-                                @Html.DropDownListFor(m => ((TileCard1)m).FilterColumnName, ColumnsList, "Select Category Column", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => ((TileCard1)m).FilterColumnName, ColumnsList, "Select Category Column", new { @class = "form-control", data_value = ((TileCard1)Model).FilterColumnName })
                             </div>
                             <div class="form-group">
                                 <label for="Filter">Enter Category Value</label>
@@ -74,11 +74,11 @@
                         <div class="col-md-6 col-lg-6 col-xs-12">
                             <div class="form-group">
                                 <label for="CountColumnName">Count Column name</label>
-                                @Html.DropDownListFor(m => ((TileCard2)m).CountColumnName, ColumnsList, "Select Value Column", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => ((TileCard2)m).CountColumnName, ColumnsList, "Select Value Column", new { @class = "form-control", data_value = ((TileCard2)Model).CountColumnName })
                             </div>
                             <div class="form-group">
                                 <label for="AmountColumnName">Amount Value Column</label>
-                                @Html.DropDownListFor(m => ((TileCard2)m).AmountColumnName, ColumnsList, "Select Performance Value Column", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => ((TileCard2)m).AmountColumnName, ColumnsList, "Select Performance Value Column", new { @class = "form-control", data_value = ((TileCard2)Model).AmountColumnName })
                             </div>
 
                             <div class="form-group">
@@ -93,7 +93,7 @@
 
                             <div class="form-group">
                                 <label for="FilterColumnName">Category Column(If any)</label>
-                                @Html.DropDownListFor(m => ((TileCard2)m).FilterColumnName, ColumnsList, "Select Category Column", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => ((TileCard2)m).FilterColumnName, ColumnsList, "Select Category Column", new { @class = "form-control", data_value = ((TileCard2)Model).FilterColumnName })
                             </div>
                             <div class="form-group">
                                 <label for="Filter">Enter Category Value(If any)</label>
@@ -108,11 +108,11 @@
                         <div class="col-md-6 col-lg-6 col-xs-12">
                             <div class="form-group">
                                 <label for="CategoryColumnName">Category Column name</label>
-                                @Html.DropDownListFor(m => ((PieChart)m).CategoryColumnName, ColumnsList, "Select Category Column", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => ((PieChart)m).CategoryColumnName, ColumnsList, "Select Category Column", new { @class = "form-control", data_value = ((PieChart)Model).CategoryColumnName })
                             </div>
                             <div class="form-group">
                                 <label for="ValueColumnName">Value Column Name</label>
-                                @Html.DropDownListFor(m => ((PieChart)m).ValueColumnName, ColumnsList, "Select Value Column", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => ((PieChart)m).ValueColumnName, ColumnsList, "Select Value Column", new { @class = "form-control", data_value = ((PieChart)Model).ValueColumnName })
                             </div>
                             <div class="form-group">
                                 <label for="LabelTemplateFormat">Lbale Template Format</label>
@@ -123,6 +123,7 @@
                     }
                     <div class="col-md-6 col-lg-6 col-xs-12">
                         <div class="form-group">
+                            @Html.HiddenFor(m => m.WidgetID)
                             <button type="submit">Submit Form</button>
                         </div>
                     </div>
@@ -136,6 +137,12 @@
 <script>
 
     $(function() {
+
+        var SourceValue = $('#SourceName').val();
+        if (SourceValue.length > 0) {
+            SourceChnage();
+        }
+
 
         $('button.btn').on('click', function(e){
 
@@ -165,23 +172,33 @@
         });
 
         $('#SourceName').change(function () {
-            var url = '@Url.Content("~/")' + "Dashboard/GetColumns";
-            var ddlSource = $('#SourceName').val();
-
-            $.getJSON(url, { TableName: ddlSource }, function (data) {
-                var items = '';
-                $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName').empty();
-
-                items += "<option value=''>"+" "+"</option>";
-                $.each(data, function (i, columnName) {
-                    items += "<option value='" + columnName.text + "'>" + columnName.text+"</option>";
-                });
-                $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName').html(items);
-
-            });
+            SourceChnage();
 
         });
 
     });
+
+    function SourceChnage() {
+
+        var url = '@Url.Content("~/")' + "Dashboard/GetColumns";
+        var ddlSource = $('#SourceName').val();
+
+        $.getJSON(url, { TableName: ddlSource }, function (data) {
+            var items = '';
+            $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName').empty();
+
+            items += "<option value=''>"+" "+"</option>";
+            $.each(data, function (i, columnName) {
+                items += "<option value='" + columnName.text + "'>" + columnName.text+"</option>";
+            });
+            $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName').html(items);
+
+            $.each($('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName'), function (index, item) {
+                $(item).val($(item).data("value"));
+            });
+
+
+        });
+    }
 </script>
 
