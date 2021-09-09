@@ -23,7 +23,7 @@ else if (!obj.IsRealValues)
             <span style="font-size:18px;color: #D12729;opacity: .79; padding-top: 35px; margin-right: 27px; float: right;">
                 <img src="~/images/red arrow down.png" />&nbsp;
                 <img src="~/images/green arrow up.png" />
-                PerfomanceValue
+                PerfomanceValue %
             </span>
         </div>
     </div>
@@ -61,7 +61,7 @@ else
                     {
                         <img src="~/images/green arrow up.png" />
                     }
-                    @obj.PerformanceValue
+                    @String.Format("{0:" + obj.PerformanceValueFormat + "}", obj.PerformanceValue)%
                 </span>
             }
             else
@@ -74,7 +74,7 @@ else
                 <span style="font-size:18px;color: #D12729;opacity: .79; padding-top: 35px; margin-right: 27px; float: right;">
                     <img src="~/images/red arrow down.png" />&nbsp;
                     <img src="~/images/green arrow up.png" />
-                    PerfomanceValue
+                    PerfomanceValue %
                 </span>
             }
         </div>

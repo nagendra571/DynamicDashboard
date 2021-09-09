@@ -12,7 +12,10 @@ namespace WebApplication2.Models
         /// </summary>
         public decimal Value { get; set; }
         public decimal PerformanceValue { get; set; }
+        
         public string Format { get; set; }
+        public string PerformanceValueFormat { get; set; }
+
         public string Link { get; set; }
         public string Filter { get; set; }
 

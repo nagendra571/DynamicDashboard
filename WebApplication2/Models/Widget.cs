@@ -46,6 +46,10 @@ namespace WebApplication2.Models
                     case 3:
                         actionName = "SavePieChart";
                         break;
+                    case 2:
+                        actionName = "SaveTileCard3";
+                        break;
+                        
 
                 }
                 return actionName;

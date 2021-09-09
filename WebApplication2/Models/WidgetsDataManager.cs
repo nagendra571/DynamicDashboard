@@ -44,7 +44,9 @@ namespace WebApplication2.Models
                 case 3:
                     T = typeof(PieChart);
                     break;
-
+                case 2:
+                    T = typeof(TileCard3);
+                    break;
             }
             return T;
         }

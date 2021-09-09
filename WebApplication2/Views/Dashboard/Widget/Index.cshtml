@@ -41,14 +41,18 @@
                     {
                         <div class="col-md-6 col-lg-6 col-xs-12">
                             <div class="form-group">
-                                <label for="ValueColumnName">Value</label>
+                                <label for="ValueColumnName">Value Column name</label>
                                 @Html.DropDownListFor(m => ((TileCard1)m).ValueColumnName, ColumnsList, "Select Value Column", new { @class = "form-control", data_value = ((TileCard1)Model).ValueColumnName })
                             </div>
                             <div class="form-group">
-                                <label for="PerformanceValueColumnName">Performance Value</label>
+                                <label for="PerformanceValueColumnName">Performance Value Column name</label>
                                 @Html.DropDownListFor(m => ((TileCard1)m).PerformanceValueColumnName, ColumnsList, "Select Performance Value Column", new { @class = "form-control", data_value = ((TileCard1)Model).PerformanceValueColumnName })
                             </div>
 
+                            <div class="form-group">
+                                <label for="Format">Performance Value Format</label>
+                                @Html.TextBoxFor(m => ((TileCard1)m).PerformanceValueFormat, new { @class = "form-control" })
+                            </div>
                             <div class="form-group">
                                 <label for="Format">Value Format</label>
                                 @Html.TextBoxFor(m => ((TileCard1)m).Format, new { @class = "form-control" })
@@ -82,6 +86,10 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="Format">Count Value Format</label>
+                                @Html.TextBoxFor(m => ((TileCard2)m).CountFormat, new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
                                 <label for="Format">Amount Value Format</label>
                                 @Html.TextBoxFor(m => ((TileCard2)m).Format, new { @class = "form-control" })
                             </div>
@@ -98,6 +106,50 @@
                             <div class="form-group">
                                 <label for="Filter">Enter Category Value(If any)</label>
                                 @Html.TextBoxFor(m => ((TileCard2)m).Filter, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    }
+                    else if (Model.RequiredCaptureValues && Model.ElementTemplateID == 2)
+                    {
+                        <div class="col-md-6 col-lg-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="ValueColumnName">Planned Value Coloumn name</label>
+                                @Html.DropDownListFor(m => ((TileCard3)m).PlanedValueColumnName, ColumnsList, "Select Planned Value Column", new { @class = "form-control", data_value = ((TileCard3)Model).PlanedValueColumnName })
+                            </div>
+                            <div class="form-group">
+                                <label for="PerformanceValueColumnName">Actual Value Column name</label>
+                                @Html.DropDownListFor(m => ((TileCard3)m).ActualValueColumnName, ColumnsList, "Select Actual Value Column", new { @class = "form-control", data_value = ((TileCard3)Model).ActualValueColumnName })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="Format">Planned Value Format</label>
+                                @Html.TextBoxFor(m => ((TileCard3)m).PlanedValueFormat, new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                <label for="Format">Actual Value Format</label>
+                                @Html.TextBoxFor(m => ((TileCard3)m).ActualValueFormat, new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                <label for="Format">Performance Value Format</label>
+                                @Html.TextBoxFor(m => ((TileCard3)m).PerformanceValueFormat, new { @class = "form-control" })
+                            </div>
+
+
+
+                            <div class="form-group">
+                                <label for="Link">Actual Value Link</label>
+                                @Html.TextBoxFor(m => ((TileCard3)m).ActualValueLink, new { @class = "form-control" })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="FilterColumnName">Category Column</label>
+                                @Html.DropDownListFor(m => ((TileCard3)m).FilterColumnName, ColumnsList, "Select Category Column", new { @class = "form-control", data_value = ((TileCard3)Model).FilterColumnName })
+                            </div>
+                            <div class="form-group">
+                                <label for="Filter">Enter Category Value</label>
+                                @Html.TextBoxFor(m => ((TileCard3)m).Filter, new { @class = "form-control" })
                             </div>
                         </div>
                     }
@@ -185,15 +237,15 @@
 
         $.getJSON(url, { TableName: ddlSource }, function (data) {
             var items = '';
-            $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName').empty();
+            $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName, #ActualValueColumnName, #PlanedValueColumnName').empty();
 
             items += "<option value=''>"+" "+"</option>";
             $.each(data, function (i, columnName) {
                 items += "<option value='" + columnName.text + "'>" + columnName.text+"</option>";
             });
-            $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName').html(items);
+            $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName, #ActualValueColumnName, #PlanedValueColumnName').html(items);
 
-            $.each($('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName'), function (index, item) {
+            $.each($('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName, #ActualValueColumnName, #PlanedValueColumnName'), function (index, item) {
                 $(item).val($(item).data("value"));
             });
 

@@ -40,7 +40,7 @@ else
             {
                 <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
                     <a target="_blank" href='@(string.IsNullOrEmpty(obj.Link) ? "#" : obj.Link)' class="blackwhitetext">
-                        @obj.Count
+                        @String.Format("{0:" + obj.CountFormat + "}", obj.Count)
                     </a>
                 </span>
                 <span style="font-size:46px;color: #586672;opacity: .7; padding-top: 8px; margin-right: 27px; float: right;">

@@ -43,10 +43,10 @@ else
                     </div>
                     <!-- Element2 -->
                     <div class="col-md-6 col-lg-6 col-xs-12">
-                        <button type="btn" onclick="" class="btn custom-btn waves-effect waves-light m-b-10 pull-right" id="2">Add</button>
+                        @Html.ActionLink(LinkName, actionName, "Dashboard", new { TemplatedID = 2 }, new { @class = "btn custom-btn waves-effect waves-light m-b-10 pull-right" })
                         <div class="white-box" style="width: 400px; height: 300px">
                             <div class="white-box" style="height:350px; width:100%; padding-left:0px; padding-right:0px; padding-bottom:0px;">
-                                @{ Html.RenderPartial("Element2.cshtml"); }
+                                @{ Html.RenderPartial("Element2.cshtml", new TileCard3()); }
                             </div>
                         </div>
                     </div>

@@ -248,6 +248,15 @@ namespace EnergyAxis.Controllers
                     RequiredCaptureValues = true
                 };
             }
+            else if (TemplatedID == 2)
+            {
+                tileCard = new TileCard3()
+                {
+                    ElementTemplateID = TemplatedID,
+                    TableAndColumns = viewsNames,
+                    RequiredCaptureValues = true
+                };
+            }
             else if (TemplatedID == 5 || TemplatedID == 4 || TemplatedID == 3)
             {
                 tileCard = new PieChart()
@@ -299,7 +308,7 @@ namespace EnergyAxis.Controllers
                 ElementID = card.ElementTemplateID,
                 Formation = JsonSerializer.Serialize<TileCard1>(card),
                 ClassType = card.GetType().AssemblyQualifiedName,
-                IsDeActivated = false                
+                IsDeActivated = false
             };
 
             try
@@ -341,13 +350,45 @@ namespace EnergyAxis.Controllers
                 IsDeActivated = false
             };
 
-            //try
-            //{
-            //    db.WidgetStructure.Add(obj);
-            //    db.SaveChanges();
+            try
+            {
+                if (card.WidgetID > 0)
+                {
+                    obj.ID = card.WidgetID;
+                    db.Entry(db.WidgetStructure.FirstOrDefault(x => x.ID == card.WidgetID)).CurrentValues.SetValues(obj);
+                }
+                else
+                {
+                    db.WidgetStructure.Add(obj);
+                }
 
-            //    var WidgID = obj.ID;
-            //}
+                db.SaveChanges();
+
+                var WidgID = obj.ID;
+            }
+            catch (System.Exception e)
+            {
+
+            }
+
+            ViewData["dashboardId"] = 1;
+            return RedirectToAction("WidgetsList");
+        }
+
+        [HttpPost]
+        public IActionResult SaveTileCard3(TileCard3 card)
+        {
+            var enteredInfo = card;
+
+
+            WidgetStructure obj = new WidgetStructure()
+            {
+                ElementID = card.ElementTemplateID,
+                Formation = JsonSerializer.Serialize<TileCard3>(card),
+                ClassType = card.GetType().ToString(),
+                IsDeActivated = false
+            };
+
             try
             {
                 if (card.WidgetID > 0)
@@ -386,13 +427,6 @@ namespace EnergyAxis.Controllers
                 IsDeActivated = false
             };
 
-            //try
-            //{
-            //    db.WidgetStructure.Add(obj);
-            //    db.SaveChanges();
-
-            //    var WidgID = obj.ID;
-            //}
             try
             {
                 if (card.WidgetID > 0)
@@ -509,7 +543,7 @@ namespace EnergyAxis.Controllers
 
                     widgetsInfo.Add(w);
                 }
-                else if (widg.ClassType == typeof(TileCard2).ToString() || widg.ClassType == typeof(TileCard1).AssemblyQualifiedName || widg.ClassType.Contains("tilecard2", StringComparison.OrdinalIgnoreCase))
+                else if (widg.ClassType == typeof(TileCard2).ToString() || widg.ClassType == typeof(TileCard2).AssemblyQualifiedName || widg.ClassType.Contains("tilecard2", StringComparison.OrdinalIgnoreCase))
                 {
                     TileCard2 w = (TileCard2)WidgetsDataManager.PrepareData(widg);
                     w.IsRealValues = true;
@@ -530,6 +564,27 @@ namespace EnergyAxis.Controllers
 
                     widgetsInfo.Add(w);
                 }
+                else if (widg.ClassType == typeof(TileCard3).ToString() || widg.ClassType == typeof(TileCard3).AssemblyQualifiedName || widg.ClassType.Contains("tilecard3", StringComparison.OrdinalIgnoreCase))
+                {
+                    TileCard3 w = (TileCard3)WidgetsDataManager.PrepareData(widg);
+                    w.IsRealValues = true;
+                    w.RequiredCaptureValues = false;
+                    w.RoleID = 1;
+                    w.UserID = "nagendra.chinnam@otis.com";
+
+                    if (ExecuteQuery)
+                    {
+                        var result = db.RawSqlQuery(
+                        ((TileCard3)w).Query,
+                        x => new TileCard3() { PlanedValue = Convert.ToDecimal(x[0]), ActualValue = Convert.ToDecimal(x[1]) }
+                        );
+                        w.PlanedValue = result.FirstOrDefault().PlanedValue;
+                        w.ActualValue = result.FirstOrDefault().ActualValue;
+                    }
+                    w.WidgetID = widg.ID;
+
+                    widgetsInfo.Add(w);
+                }
                 else if (widg.ClassType == typeof(PieChart).ToString() || widg.ClassType == typeof(PieChart).AssemblyQualifiedName || widg.ClassType.Contains("PieChart", StringComparison.OrdinalIgnoreCase))
                 {
                     PieChart w = (PieChart)WidgetsDataManager.PrepareData(widg);
@@ -545,11 +600,11 @@ namespace EnergyAxis.Controllers
                         x => new PieChart() { Category = x[0].ToString(), Value = (x[1]).ToString() }
                         );
 
-                        var recors = from record in result
-                                     select new PieChartRecord() { Category = record.Category, Value = record.Value };
+                        var records = from record in result select new PieChartRecord() { Category = record.Category, Value = record.Value };
 
-                        w.Data = recors;
+                        w.Data = records;
                     }
+
                     w.WidgetID = widg.ID;
 
                     widgetsInfo.Add(w);

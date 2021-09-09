@@ -1,39 +1,186 @@
 
-<!--Div that will hold the pie chart-->
-<div id="chart_div"></div>
+@model Widget
 
-<script type="text/javascript">
+@{
+    TileCard3 obj = (TileCard3)Model;
+}
 
-    // Load the Visualization API and the corechart package.
-    google.charts.load('current', {'packages':['corechart']});
+@if (obj.IsDragDropEnabled)
+{
+    <div itemid="@obj.WidgetID" class="btn btn-default box-item">@obj.Heading - @obj.SubHeading</div>
+}
+else if (!obj.IsRealValues)
+{
 
-    // Set a callback to run when the Google Visualization API is loaded.
-    google.charts.setOnLoadCallback(drawChart);
+    <div class="persona-card persona-card-small red-card dark-mode">
+        <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">Heading</div>
+        <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">Sub-Heading</h3>
+        <span style="font-size:24px;padding-top: 4px; padding-left: 45px; font-weight: 900; float: left;">
+            <span style="font-size:20px; color: #102436;opacity: .7">Plan:</span>
+            <span>$224M</span>
+            <br />
+            <span style="font-size:20px; color: #102436; opacity: .7">Actual:</span>
+            <a target="_blank" href="#" class="blackwhitetext">
+                $192M
+            </a>
+        </span>
+        <span style="font-size:18px;color: #D12729;opacity: .79; padding-top: 35px; margin-right: 27px; float: right;">
+            <img src="~/images/red arrow down.png" />
+            ($32M)
+        </span>
+    </div>
 
-    // Callback that creates and populates a data table,
-    // instantiates the pie chart, passes in the data and
-    // draws it.
-    function drawChart() {
 
-    // Create the data table.
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Topping');
-    data.addColumn('number', 'Slices');
-    data.addRows([
-        ['Mushrooms', 3],
-        ['Onions', 1],
-        ['Olives', 1],
-        ['Zucchini', 1],
-        ['Pepperoni', 2]
-    ]);
+}
+else
+{
+    <div class="col-md">
+        <div class="persona-card persona-card-small @(obj.PerformanceValue <= 0 ? "red-card" : "green-card") dark-mode">
+            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">@obj.Heading</div>
+            <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">@obj.SubHeading</h3>
+            @if (obj.WidgetSelection)
+            {
+                <span style="font-size:24px;padding-top: 4px; padding-left: 45px; font-weight: 900; float: left;">
+                    <span style="font-size:20px; color: #102436;opacity: .7">Plan:</span>
+                    <span>$224M</span>
+                    <br />
+                    <span style="font-size:20px; color: #102436; opacity: .7">Actual:</span>
+                    <a target="_blank" href="#" class="blackwhitetext">$192M</a>
+                </span>
+                <span style="font-size:18px;color: #D12729;opacity: .79; padding-top: 35px; margin-right: 27px; float: right;">
+                    <img src="~/images/red arrow down.png" />
+                    ($32M)
+                </span>
+            }
+            else
+            {
 
-    // Set chart options
-    var options = {'title':'How Much Pizza I Ate Last Night',
-                    'width':400,
-                    'height':300};
+                <span style="font-size:24px;padding-top: 4px; padding-left: 45px; font-weight: 900; float: left;">
+                    <span style="font-size:20px; color: #102436;opacity: .7">Plan:</span>
+                    <span>@String.Format("{0:" + obj.PlanedValueFormat + "}", obj.PlanedValue)</span>
+                    <br />
+                    <span style="font-size:20px; color: #102436; opacity: .7">Actual:</span>
+                    <a target="_blank" href='@(string.IsNullOrEmpty(obj.ActualValueLink) ? "#" : obj.ActualValueLink)' class="blackwhitetext">
+                        @String.Format("{0:" + obj.ActualValueFormat + "}", obj.ActualValue)
+                    </a>
+                </span>
+                <span style="font-size:18px;color: @(obj.PerformanceValue <= 0 ? "#E62727" : "#4caf50");opacity: .79; padding-top: 35px; margin-right: 27px; float: right;">
+                    @if (obj.PerformanceValue <= 0)
+                    {
+                        <img src="~/images/red arrow down.png" />
+                    }
+                    else
+                    {
+                        <img src="~/images/green arrow up.png" />
+                    }
+                    @String.Format("{0:" + obj.PerformanceValueFormat + "}", obj.PerformanceValue)
+                </span>
+            }
+        </div>
+    </div>
+}
 
-    // Instantiate and draw our chart, passing in some options.
-    var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-    chart.draw(data, options);
+
+<style type="text/css">
+    .persona-card {
+        box-shadow: 0px 5px 8px #00000059;
+        border-radius: 8px;
+        background: #FDFDFD 0% 0% no-repeat padding-box;
     }
-</script>
+
+    .persona-card-small {
+        height: 170px;
+    }
+
+    .persona-card-large {
+        height: 360px;
+    }
+
+    .persona-card-banner {
+        height: 65px;
+    }
+
+        .persona-card-banner .nav-link {
+            padding: 7px 13px 9px 13px !important;
+            font-size: 20px;
+            margin: 0px 80px 0px 80px;
+        }
+
+        .persona-card-banner .active .nav-link {
+            font-weight: 600;
+        }
+
+    .green-card {
+        border-left: 10px solid #4caf50;
+    }
+
+    .red-card {
+        border-left: 10px solid #E62727;
+    }
+
+    .yellow-card {
+        border-left: 10px solid #ec983d;
+    }
+</style>
+
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+</style>

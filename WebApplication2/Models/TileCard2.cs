@@ -12,7 +12,10 @@ namespace WebApplication2.Models
         /// </summary>
         public decimal Count { get; set; }
         public decimal Amount { get; set; }
+
         public string Format { get; set; }
+        public string CountFormat { get; set; }
+
         public string Link { get; set; }
         public string Filter { get; set; }
 

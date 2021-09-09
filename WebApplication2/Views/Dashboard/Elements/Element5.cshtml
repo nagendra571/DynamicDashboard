@@ -1,5 +1,6 @@
 @{
     PieChart obj = (PieChart)Model;
+
 }
 
 
@@ -74,6 +75,7 @@ else
                 .Series(series =>
                 {
                     series.Pie(m=>m.Value, m=>m.Category)
+                    .ColorField("Colour")
                     .Labels(labels => labels
                         .Template("#= category #: \n #= value#%")
                         //.Template("#= category #")
