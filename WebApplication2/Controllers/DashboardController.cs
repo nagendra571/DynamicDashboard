@@ -661,15 +661,25 @@ namespace EnergyAxis.Controllers
         {
             try
             {
-                var Board = new DashboardsInfo()
-                {
-                    Name = dashboard.Name,
-                    ElementsCount = dashboard.SelectedElements.Split(',').Length
-                };
-                db.DashboardsInfo.Add(Board);
-                db.SaveChanges();
+                int normalElementsCount = (dashboard != null && dashboard.SelectedElements != null) ? dashboard.SelectedElements.Split(',').Length : 0;
+                int defaultElementsCount = (dashboard != null && dashboard.DefaultedElements != null) ? dashboard.DefaultedElements.Split(',').Length : 0;
 
-                return Board.Id;
+                if (normalElementsCount + defaultElementsCount > 0)
+                {
+                    var Board = new DashboardsInfo()
+                    {
+                        Name = dashboard.Name,
+                        ElementsCount = normalElementsCount + defaultElementsCount
+                    };
+                    db.DashboardsInfo.Add(Board);
+                    db.SaveChanges();
+
+                    return Board.Id;
+                }
+                else
+                {
+                    return 0;
+                }
             }
             catch (System.Exception e)
             {
