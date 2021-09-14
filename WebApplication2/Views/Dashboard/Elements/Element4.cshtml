@@ -6,7 +6,7 @@
 
 @if (obj.IsDragDropEnabled)
 {
-    <div itemid="@obj.WidgetID" class="btn btn-default box-item">@obj.Heading - @obj.SubHeading</div>
+    <div itemid="@obj.WidgetID" id="@obj.WidgetID" class="btn btn-default box-item">@obj.Heading - @obj.SubHeading</div>
 }
 else if (!obj.IsRealValues)
 {

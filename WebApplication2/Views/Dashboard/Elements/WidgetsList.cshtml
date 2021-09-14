@@ -24,14 +24,16 @@
 <form>
     <section class="content container-fluid">
         <div class="row match-to-row">
-
-            @foreach (var widg in Model)
+            @if (Model != null && Model.Count() > 0)
             {
-                <div class="col-lg-4 col-sm-6">
-                    <div class="thumbnail">
-                        @{ Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg); }
+                foreach (var widg in Model.OrderBy(m => m.Position))
+                {
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="thumbnail">
+                            @{ Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg); }
+                        </div>
                     </div>
-                </div>
+                }
             }
 
         </div>

@@ -28,6 +28,8 @@ namespace WebApplication2.Models
 
         public string UserID { get; set; }
         public int RoleID { get; set; }
+
+        public int Position { get; set; }
         public string SaveActionName
         {
             get

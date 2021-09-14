@@ -10,5 +10,7 @@ namespace Dynamic_User_Defined_Dashboards.Models
         public int WidgetID { get; set; }
         public bool IsDefaultElement { get; set; }
         public string Placement { get; set; }
+
+        public int? Position { get; set; }
     }
 }

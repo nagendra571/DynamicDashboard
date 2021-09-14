@@ -49,11 +49,22 @@ namespace EnergyAxis.Controllers
             DashboardsInfo board = db.DashboardsInfo.Where(m => m.Id == id).FirstOrDefault();
             List<DashboardLinkedElements> widgetListByDashboard = db.DashboardLinkedElements.Where(m => m.DashboardId == id).ToList();
 
+            List<DashboardLinkedElements> defaultDashboardLinkedElements = new List<DashboardLinkedElements>();
+            List<DashboardLinkedElements> selectedDashboardLinkedElements = new List<DashboardLinkedElements>();
+            List<DashboardLinkedElements> AllDashboardLinkedElements = new List<DashboardLinkedElements>();
+
+            defaultDashboardLinkedElements = widgetListByDashboard.Where(m => m.IsDefaultElement == true).ToList();
+            selectedDashboardLinkedElements = widgetListByDashboard.Where(m => m.IsDefaultElement == false).ToList().OrderBy(m => m.Position).ToList();
+            selectedDashboardLinkedElements.ForEach(m => m.Position = m.Position + defaultDashboardLinkedElements.Count());
+
+            AllDashboardLinkedElements.AddRange(defaultDashboardLinkedElements);
+            AllDashboardLinkedElements.AddRange(selectedDashboardLinkedElements);
+
             List<Widget> widgets = new List<Widget>();
 
-            foreach (var widg in widgetListByDashboard)
+            foreach (var widg in AllDashboardLinkedElements)
             {
-                widgets.AddRange(getWidgetList(widg.WidgetID));
+                widgets.AddRange(getWidgetList(widg.WidgetID, widg.Position ?? 0));
             }
             widgets.ForEach(m => m.DashboardID = id);
 
@@ -273,7 +284,7 @@ namespace EnergyAxis.Controllers
         {
             var viewsNames = db.GetTableAndColumns();
 
-            Widget tileCard = getWidgetList(WidgetID, false).ToList().FirstOrDefault();
+            Widget tileCard = getWidgetList(WidgetID,0, false).ToList().FirstOrDefault();
             tileCard.TableAndColumns = viewsNames;
             tileCard.RequiredCaptureValues = true;
 
@@ -504,7 +515,7 @@ namespace EnergyAxis.Controllers
             return Ok(boards.ToList());
         }
 
-        private List<Widget> getWidgetList(int WidgetID = 0, bool ExecuteQuery = true)
+        private List<Widget> getWidgetList(int WidgetID = 0, int position = 0, bool ExecuteQuery = true)
         {
             List<WidgetStructure> Widgets;
 
@@ -610,6 +621,12 @@ namespace EnergyAxis.Controllers
                     widgetsInfo.Add(w);
                 }
             }
+
+            if (widgetsInfo != null)
+            {
+                widgetsInfo.ForEach(m => m.Position = position);
+            }
+
             return widgetsInfo;
         }
 
@@ -714,33 +731,49 @@ namespace EnergyAxis.Controllers
 
         private string CreateDashboardElements(DashboardViewModel dashboard, int DashboardID)
         {
-            var SelectedElements = dashboard.SelectedElements.Split(',').Select(Int32.Parse).ToList<int>();
-            var DefaultedGadgets = dashboard.DefaultedElements.Split(',').Select(Int32.Parse).ToList<int>();
+            var SelectedElements = (dashboard != null && dashboard.SelectedElements != null) ? dashboard.SelectedElements.Split(',').Select(Int32.Parse).ToList<int>() : new List<int>();
+            var DefaultedGadgets = (dashboard != null && dashboard.DefaultedElements != null) ? dashboard.DefaultedElements.Split(',').Select(Int32.Parse).ToList<int>() : new List<int>();
             try
             {
-                if (SelectedElements != null && SelectedElements.Count() > 0)
+                if (1 == 2)
                 {
-                    foreach (var item in SelectedElements)
+                    if (SelectedElements != null && SelectedElements.Count() > 0)
                     {
-                        db.DashboardLinkedElements.Add(new DashboardLinkedElements()
+                        foreach (var item in SelectedElements)
                         {
-                            DashboardId = DashboardID,
-                            WidgetID = item,
-                            IsDefaultElement = false
-                        });
-                        db.SaveChanges();
+                            db.DashboardLinkedElements.Add(new DashboardLinkedElements()
+                            {
+                                DashboardId = DashboardID,
+                                WidgetID = item,
+                                IsDefaultElement = false
+                            });
+                            db.SaveChanges();
+                        }
+                    }
+                    if (DefaultedGadgets != null && DefaultedGadgets.Count() > 0)
+                    {
+                        foreach (var item in DefaultedGadgets)
+                        {
+                            db.DashboardLinkedElements.Add(new DashboardLinkedElements()
+                            {
+                                DashboardId = DashboardID,
+                                WidgetID = item,
+                                IsDefaultElement = true
+                            });
+                            db.SaveChanges();
+                        }
                     }
                 }
-                if (DefaultedGadgets != null && DefaultedGadgets.Count() > 0)
+                else
                 {
-                    foreach (var item in DefaultedGadgets)
+                    foreach (var item in dashboard.SelectedElementsWithOrder)
                     {
-                        db.DashboardLinkedElements.Add(new DashboardLinkedElements()
-                        {
-                            DashboardId = DashboardID,
-                            WidgetID = item,
-                            IsDefaultElement = true
-                        });
+                        db.DashboardLinkedElements.Add(item);
+                        db.SaveChanges();
+                    }
+                    foreach (var item in dashboard.DefaultedElementsWithOrder)
+                    {
+                        db.DashboardLinkedElements.Add(item);
                         db.SaveChanges();
                     }
                 }

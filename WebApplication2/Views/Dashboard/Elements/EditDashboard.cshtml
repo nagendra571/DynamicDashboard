@@ -53,7 +53,7 @@
         <div class="col-xs-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h1 class="panel-title">Add Widgets</h1>
+                    <h1 class="panel-title">Available Widgets</h1>
                 </div>
                 <div id="container3" class="panel-body box-container">
                     @foreach (var widg in Model.Where(m => !m.IsAccessble).ToList())
@@ -89,7 +89,27 @@
 
 <script type="text/javascript">
 
+    var DashboardViewModel = {
+        Id: 0,
+        Name : '',
+        SelectedElements : '',
+        DefaultedElements: '',
+        SelectedElementsWithOrder: [],
+        DefaultedElementsWithOrder: []
+    };
+
+    var DashboardLinkedElement = {
+        DashboardId  : 0,
+        WidgetID: 0,
+        IsDefaultElement: false,
+        Position : 0
+    }
+
+    SelectedElementsWithOrder = [];
+    DefaultedElementsWithOrder = [];
+
     function Next(Id) {
+        debugger;
         var arr1 = [];
         var arr2 = [];
 
@@ -104,17 +124,51 @@
             return element !== undefined;
         });
 
+        var itemOrder1 = $('#container1').sortable("toArray");
+        var itemOrder2 = $('#container2').sortable("toArray");
+
+        var container1Items = itemOrder1.filter(function (v) { return v !== '' });
+        var container2Items = itemOrder2.filter(function (v) { return v !== '' });
+
+        $.each(container1Items, function (indexer, item) {
+            var DashboardLinkedElement = {
+                DashboardId: Id,
+                WidgetID: item,
+                IsDefaultElement: true,
+                Position: indexer
+            };
+
+            DefaultedElementsWithOrder.push(DashboardLinkedElement);
+        });
+        $.each(container2Items, function (indexer, item) {
+            var DashboardLinkedElement = {
+                DashboardId: Id,
+                WidgetID: item,
+                IsDefaultElement: false,
+                Position: indexer
+            };
+
+            SelectedElementsWithOrder.push(DashboardLinkedElement);
+        });
+
+        DashboardViewModel.Id = Id;
+        DashboardViewModel.Name = $('#Dashboardname').val();
+        DashboardViewModel.DefaultedElements = arr1.join(",");
+        DashboardViewModel.SelectedElements = arr2.join(",");
+        DashboardViewModel.DefaultedElementsWithOrder = DefaultedElementsWithOrder;
+        DashboardViewModel.SelectedElementsWithOrder = SelectedElementsWithOrder;
 
         $.ajax(
         {
             type: "POST",
             url: '@Url.Action("UpdateDashboard", "Dashboard")',
-            data: {
-                Id: Id,
-                DefaultedElements: arr1.join(","),
-                SelectedElements: arr2.join(","),
-                Name: $('#Dashboardname').val()
-            },
+            //data: {
+            //    Id: Id,
+            //    DefaultedElements: arr1.join(","),
+            //    SelectedElements: arr2.join(","),
+            //    Name: $('#Dashboardname').val()
+            //},
+            data: DashboardViewModel,
             error: function (result) {
                 alert("error");
             },
@@ -131,7 +185,19 @@
 
     }
 
+    function Next1(Id) {
+
+        var itemOrder1 = $('#container1').sortable("toArray");
+        var itemOrder2 = $('#container2').sortable("toArray");
+
+        var container1Items = itemOrder1.filter(function (v) { return v !== '' });
+        var container2Items = itemOrder2.filter(function (v) { return v !== '' });
+
+    }
+
     $(document).ready(function () {
+
+        $('#container1, #container2').sortable();
 
         $('.box-item').draggable({
             cursor: 'move',
@@ -173,4 +239,5 @@
         });
 
     });
+
 </script>
