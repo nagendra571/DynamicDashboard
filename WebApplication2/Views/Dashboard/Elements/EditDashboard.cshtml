@@ -4,7 +4,14 @@
 @{
     ViewBag.Title = "Dashboard Elements";
 
-    int dashboardID = (Model != null && Model.Count() > 0 && Model.Where(m => m.IsAccessble).ToList().Count() > 0) ? Model.Where(m => m.IsAccessble).ToList().FirstOrDefault().DashboardID : 0;
+    //int dashboardID = (Model != null && Model.Count() > 0 && Model.Where(m => m.IsAccessble).ToList().Count() > 0) ? Model.Where(m => m.IsAccessble).ToList().FirstOrDefault().DashboardID : 0;
+
+    int dashboardID = 0;
+
+    @if (ViewBag.DashboardId != null)
+    {
+        dashboardID = (int)ViewBag.DashboardId;
+    }
 }
 
 <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
@@ -63,6 +70,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
@@ -197,11 +205,12 @@
 
     $(document).ready(function () {
 
-        $('#container1, #container2').sortable();
+        $('#container1, #container2, #container3').sortable();
+        
 
         $('.box-item').draggable({
             cursor: 'move',
-            helper: "clone"
+            connectToSortable: ".box-container"
         });
 
         $("#container1").droppable({

@@ -102,6 +102,7 @@ namespace EnergyAxis.Controllers
                 DashboardsInfo board = db.DashboardsInfo.Where(m => m.Id == id).FirstOrDefault();
                 widgetListByDashboard = db.DashboardLinkedElements.Where(m => m.DashboardId == id).ToList();
                 ViewBag.Dashboardname = board.Name;
+                ViewBag.DashboardId = board.Id;
             }
 
             List<Widget> widgets = getWidgetList();
@@ -284,7 +285,7 @@ namespace EnergyAxis.Controllers
         {
             var viewsNames = db.GetTableAndColumns();
 
-            Widget tileCard = getWidgetList(WidgetID,0, false).ToList().FirstOrDefault();
+            Widget tileCard = getWidgetList(WidgetID, 0, false).ToList().FirstOrDefault();
             tileCard.TableAndColumns = viewsNames;
             tileCard.RequiredCaptureValues = true;
 
@@ -766,15 +767,21 @@ namespace EnergyAxis.Controllers
                 }
                 else
                 {
-                    foreach (var item in dashboard.SelectedElementsWithOrder)
+                    if (dashboard != null && dashboard.SelectedElementsWithOrder != null)
                     {
-                        db.DashboardLinkedElements.Add(item);
-                        db.SaveChanges();
+                        foreach (var item in dashboard.SelectedElementsWithOrder)
+                        {
+                            db.DashboardLinkedElements.Add(item);
+                            db.SaveChanges();
+                        }
                     }
-                    foreach (var item in dashboard.DefaultedElementsWithOrder)
+                    if (dashboard != null && dashboard.DefaultedElementsWithOrder != null)
                     {
-                        db.DashboardLinkedElements.Add(item);
-                        db.SaveChanges();
+                        foreach (var item in dashboard.DefaultedElementsWithOrder)
+                        {
+                            db.DashboardLinkedElements.Add(item);
+                            db.SaveChanges();
+                        }
                     }
                 }
                 return "True";
