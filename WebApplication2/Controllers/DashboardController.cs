@@ -113,6 +113,7 @@ namespace EnergyAxis.Controllers
                     widgets.Where(m => m.WidgetID == widg.WidgetID).FirstOrDefault().IsAccessble = true;
                     widgets.Where(m => m.WidgetID == widg.WidgetID).FirstOrDefault().DashboardID = id;
                     widgets.Where(m => m.WidgetID == widg.WidgetID).FirstOrDefault().IsDefaulted = widg.IsDefaultElement;
+                    widgets.Where(m => m.WidgetID == widg.WidgetID).FirstOrDefault().Position = (int)widg.Position;
                 }
             }
 

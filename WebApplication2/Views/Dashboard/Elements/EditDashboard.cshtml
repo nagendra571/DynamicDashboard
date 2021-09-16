@@ -6,6 +6,11 @@
 
     //int dashboardID = (Model != null && Model.Count() > 0 && Model.Where(m => m.IsAccessble).ToList().Count() > 0) ? Model.Where(m => m.IsAccessble).ToList().FirstOrDefault().DashboardID : 0;
 
+    var DefaultWidgets = (Model != null && Model.Count() > 0) ? Model.Where(m => m.IsDefaulted && m.IsAccessble).ToList().OrderBy(m=>m.Position).ToList() : new List<Widget>();
+    var OptionalWidgets = (Model != null && Model.Count() > 0) ? Model.Where(m => !m.IsDefaulted && m.IsAccessble).ToList().OrderBy(m => m.Position).ToList() : new List<Widget>();
+    var AvailableWidgets = (Model != null && Model.Count() > 0) ? Model.Where(m => !m.IsAccessble).ToList().OrderBy(m => m.Heading).ToList() : new List<Widget>();
+
+
     int dashboardID = 0;
 
     @if (ViewBag.DashboardId != null)
@@ -37,7 +42,7 @@
                     <h1 class="panel-title">Default Widgets</h1>
                 </div>
                 <div id="container1" class="panel-body box-container">
-                    @foreach (var widg in Model.Where(m => m.IsDefaulted && m.IsAccessble).ToList())
+                    @foreach (var widg in DefaultWidgets)
                     {
                         Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg);
                     }
@@ -50,7 +55,7 @@
                     <h1 class="panel-title">Optional Widgets</h1>
                 </div>
                 <div id="container2" class="panel-body box-container">
-                    @foreach (var widg in Model.Where(m => !m.IsDefaulted && m.IsAccessble).ToList())
+                    @foreach (var widg in OptionalWidgets)
                     {
                         Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg);
                     }
@@ -63,7 +68,7 @@
                     <h1 class="panel-title">Available Widgets</h1>
                 </div>
                 <div id="container3" class="panel-body box-container">
-                    @foreach (var widg in Model.Where(m => !m.IsAccessble).ToList())
+                    @foreach (var widg in AvailableWidgets)
                     {
                         Html.RenderPartial("Element" + widg.ElementTemplateID + ".cshtml", widg);
                     }
@@ -206,7 +211,7 @@
     $(document).ready(function () {
 
         $('#container1, #container2, #container3').sortable();
-        
+
 
         $('.box-item').draggable({
             cursor: 'move',
