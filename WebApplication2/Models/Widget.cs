@@ -13,6 +13,8 @@ namespace WebApplication2.Models
         public string Heading { get; set; }
         public string SubHeading { get; set; }
         public string SourceName { get; set; }
+        public string AsOfDateColumnName { get; set; }
+        public DateTime? AsOfDateValue { get; set; }
 
 
         public bool IsRealValues { get; set; }

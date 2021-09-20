@@ -31,13 +31,23 @@ namespace WebApplication2.Models
         {
             get
             {
-                string Query = "SELECT " + ValueColumnName + ", " + PerformanceValueColumnName + " from " + base.SourceName;
+                string Query = "SELECT " + ValueColumnName + ", " + PerformanceValueColumnName;
+
+                if (!string.IsNullOrEmpty(base.AsOfDateColumnName))
+                {
+                    Query = Query + ", " + base.AsOfDateColumnName;
+                }
+
+                Query = Query + " from " + base.SourceName;
+
                 bool isAnd = false;
                 if (!string.IsNullOrEmpty(FilterColumnName) && !string.IsNullOrEmpty(Filter))
                 {
                     Query = Query + (!isAnd ? " where " : " and ") + FilterColumnName + " ='" + Filter + "'";
                     isAnd = true;
                 }
+
+
                 //if (base.isFilteredByUserId)
                 //{
                 //    Query = Query + (!isAnd ? " where UserEmail = '" : " and UserEmail = '") + base.UserID +"'";

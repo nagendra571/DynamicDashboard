@@ -33,7 +33,15 @@ namespace WebApplication2.Models
         {
             get
             {
-                string Query = "SELECT " + CategoryColumnName + ", " + ValueColumnName + " from " + base.SourceName;
+                string Query = "SELECT " + CategoryColumnName + ", " + ValueColumnName;
+
+                if (!string.IsNullOrEmpty(base.AsOfDateColumnName))
+                {
+                    Query = Query + ", " + base.AsOfDateColumnName;
+                }
+
+                Query = Query + " from " + base.SourceName;
+
                 bool isAnd = false;
                 if (!string.IsNullOrEmpty(FilterColumnName) && !string.IsNullOrEmpty(Filter))
                 {

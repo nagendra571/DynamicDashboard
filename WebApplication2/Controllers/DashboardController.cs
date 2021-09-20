@@ -546,10 +546,11 @@ namespace EnergyAxis.Controllers
                     {
                         var result = db.RawSqlQuery(
                             ((TileCard1)w).Query,
-                            x => new TileCard1() { Value = Convert.ToDecimal(x[0]), PerformanceValue = Convert.ToDecimal(x[1]) }
+                            x => new TileCard1() { Value = Convert.ToDecimal(x[0]), PerformanceValue = Convert.ToDecimal(x[1]), AsOfDateValue = (x.FieldCount == 3 ? (DateTime?)x[2] : null) }
                             );
                         w.Value = result.FirstOrDefault().Value;
                         w.PerformanceValue = result.FirstOrDefault().PerformanceValue;
+                        w.AsOfDateValue = result.FirstOrDefault().AsOfDateValue;
                     }
                     w.WidgetID = widg.ID;
 
@@ -568,10 +569,11 @@ namespace EnergyAxis.Controllers
                     {
                         var result = db.RawSqlQuery(
                         ((TileCard2)w).Query,
-                        x => new TileCard2() { Count = Convert.ToDecimal(x[0]), Amount = Convert.ToDecimal(x[1]) }
+                        x => new TileCard2() { Count = Convert.ToDecimal(x[0]), Amount = Convert.ToDecimal(x[1]), AsOfDateValue = (x.FieldCount == 3 ? (DateTime?)x[2] : null) }
                         );
                         w.Count = result.FirstOrDefault().Count;
                         w.Amount = result.FirstOrDefault().Amount;
+                        w.AsOfDateValue = result.FirstOrDefault().AsOfDateValue;
                     }
                     w.WidgetID = widg.ID;
 
@@ -589,10 +591,11 @@ namespace EnergyAxis.Controllers
                     {
                         var result = db.RawSqlQuery(
                         ((TileCard3)w).Query,
-                        x => new TileCard3() { PlanedValue = Convert.ToDecimal(x[0]), ActualValue = Convert.ToDecimal(x[1]) }
+                        x => new TileCard3() { PlanedValue = Convert.ToDecimal(x[0]), ActualValue = Convert.ToDecimal(x[1]), AsOfDateValue = (x.FieldCount == 3 ? (DateTime?)x[2] : null) }
                         );
                         w.PlanedValue = result.FirstOrDefault().PlanedValue;
                         w.ActualValue = result.FirstOrDefault().ActualValue;
+                        w.AsOfDateValue = result.FirstOrDefault().AsOfDateValue;
                     }
                     w.WidgetID = widg.ID;
 
@@ -610,12 +613,13 @@ namespace EnergyAxis.Controllers
                     {
                         var result = db.RawSqlQuery(
                         ((PieChart)w).Query,
-                        x => new PieChart() { Category = x[0].ToString(), Value = (x[1]).ToString() }
+                        x => new PieChart() { Category = x[0].ToString(), Value = (x[1]).ToString(), AsOfDateValue = (x.FieldCount == 3 ? (DateTime?)x[2] : null) }
                         );
 
                         var records = from record in result select new PieChartRecord() { Category = record.Category, Value = record.Value };
 
                         w.Data = records;
+                        w.AsOfDateValue = result.FirstOrDefault().AsOfDateValue;
                     }
 
                     w.WidgetID = widg.ID;

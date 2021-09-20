@@ -237,15 +237,15 @@
 
         $.getJSON(url, { TableName: ddlSource }, function (data) {
             var items = '';
-            $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName, #ActualValueColumnName, #PlanedValueColumnName').empty();
+            $('#AsOfDateColumnName, #ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName, #ActualValueColumnName, #PlanedValueColumnName').empty();
 
             items += "<option value=''>"+" "+"</option>";
             $.each(data, function (i, columnName) {
                 items += "<option value='" + columnName.text + "'>" + columnName.text+"</option>";
             });
-            $('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName, #ActualValueColumnName, #PlanedValueColumnName').html(items);
+            $('#AsOfDateColumnName, #ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName, #ActualValueColumnName, #PlanedValueColumnName').html(items);
 
-            $.each($('#ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName, #ActualValueColumnName, #PlanedValueColumnName'), function (index, item) {
+            $.each($('#AsOfDateColumnName, #ValueColumnName, #PerformanceValueColumnName, #FilterColumnName, #CountColumnName, #AmountColumnName, #CategoryColumnName, #ActualValueColumnName, #PlanedValueColumnName'), function (index, item) {
                 $(item).val($(item).data("value"));
             });
 

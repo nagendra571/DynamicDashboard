@@ -13,8 +13,12 @@ else if (!obj.IsRealValues)
 {
     <div class="col-md">
         <div class="persona-card persona-card-small yellow-card dark-mode">
-            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">Heading</div>
+            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">
+                Heading
+                <h3 class="pt-1" style="font-size: 18px; color: #102436; opacity: 0.7; padding-top: 10px; float:right">As of Date:</h3>
+            </div>
             <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">Sub-Heading</h3>
+
             <span style="font-size:46px;color: #102436;opacity: 1; padding-top: 8px; padding-left: 45px; font-weight: 900; float: left;">
                 <a target="_blank" href="#" class="blackwhitetext">
                     Value
@@ -36,13 +40,17 @@ else
     <div class="col-md">
         <div class="persona-card persona-card-small @(obj.PerformanceValue <= 0 ? "red-card" : "green-card") dark-mode">
             <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">
-                @obj.Heading
-                @if (obj.WidgetSelection)
-                {
-                    <input type="checkbox" class="form-check-input" style="float:right" name="selectedWidget" value="@obj.WidgetID" />
-                }
+                <div class="pull-left">@obj.Heading</div>
+                <div class="pull-right">As of @(obj.AsOfDateValue!=null ? Convert.ToDateTime(obj.AsOfDateValue).ToShortDateString():"")</div>
+
+                @*@if (obj.WidgetSelection)
+                    {
+                        <input type="checkbox" class="form-check-input" style="float:right" name="selectedWidget" value="@obj.WidgetID" />
+                    }*@
             </div>
-            <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">@obj.SubHeading</h3>
+            <div class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900; margin-top: 35px">
+                @obj.SubHeading
+            </div>
 
 
             @if (!obj.WidgetSelection)

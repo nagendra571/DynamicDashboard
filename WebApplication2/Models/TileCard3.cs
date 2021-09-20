@@ -33,7 +33,15 @@ namespace WebApplication2.Models
         {
             get
             {
-                string Query = "SELECT " + PlanedValueColumnName + ", " + ActualValueColumnName + " from " + base.SourceName;
+                string Query = "SELECT " + PlanedValueColumnName + ", " + ActualValueColumnName;
+
+                if (!string.IsNullOrEmpty(base.AsOfDateColumnName))
+                {
+                    Query = Query + ", " + base.AsOfDateColumnName;
+                }
+
+                Query = Query + " from " + base.SourceName;
+
                 bool isAnd = false;
                 if (!string.IsNullOrEmpty(FilterColumnName) && !string.IsNullOrEmpty(Filter))
                 {

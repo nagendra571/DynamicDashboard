@@ -13,7 +13,10 @@ else if (!obj.IsRealValues)
 {
 
     <div class="persona-card persona-card-small red-card dark-mode">
-        <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">Heading</div>
+        <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">
+            Heading
+            <h3 class="pt-1" style="font-size: 18px; color: #102436; opacity: 0.7; padding-top: 10px; float:right">As of Date:</h3>
+        </div>
         <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">Sub-Heading</h3>
         <span style="font-size:24px;padding-top: 4px; padding-left: 45px; font-weight: 900; float: left;">
             <span style="font-size:20px; color: #102436;opacity: .7">Plan:</span>
@@ -36,7 +39,10 @@ else
 {
     <div class="col-md">
         <div class="persona-card persona-card-small @(obj.PerformanceValue <= 0 ? "red-card" : "green-card") dark-mode">
-            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">@obj.Heading</div>
+            <div style="font-size: 18px;color: #102436;opacity: 0.7;padding-left: 15px;padding-top: 10px;">
+                <div class="pull-left">@obj.Heading</div>
+                <div class="pull-right">As of @(obj.AsOfDateValue!=null ? Convert.ToDateTime(obj.AsOfDateValue).ToShortDateString():"")</div>
+            </div>
             <h3 class="pt-1" style="font-size: 25px;color: #102436;opacity: 0.7;padding-left: 15px;font-weight: 900;">@obj.SubHeading</h3>
             @if (obj.WidgetSelection)
             {

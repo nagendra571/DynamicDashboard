@@ -21,8 +21,12 @@
         @Html.DropDownListFor(m => m.SourceName, list, "Select Source", new { @class = "form-control" })
     </div>
     <div class="form-group">
+        <label for="AsOfDateColumnName">As of Date Column name</label>
+        @Html.DropDownListFor(m => m.AsOfDateColumnName, list, "Select as of date column name", new { @class = "form-control" })
+    </div>
+    <div class="form-group">
         <label for="isFilteredByRole">Filter result by Role?</label>
-        @Html.CheckBoxFor(m=>m.isFilteredByRole)
+        @Html.CheckBoxFor(m => m.isFilteredByRole)
     </div>
     <div class="form-group">
         <label for="isFilteredByUserId">Filter result by UserId?</label>
